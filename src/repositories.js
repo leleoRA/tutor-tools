@@ -17,7 +17,7 @@ export function getRepoInfs(repoURL) {
   };
 }
 
-export async function fork(repoName, username) {
+export function fork(repoName, username) {
   console.log(
     `Iniciando fork do repositório "${repoName}" do usuário "${username}"...`
   );
@@ -32,14 +32,16 @@ export async function fork(repoName, username) {
 
   return axios
     .post(
-      `https://api.github.com/repos/${username}/${repoName}/forks`, body, config
+      `https://api.github.com/repos/${username}/${repoName}/forks`,
+      body,
+      config
     )
     .then(({ data }) => {
       return data.name;
     });
 }
 
-export async function clone(forkName, username) {
+export function clone(forkName, username) {
   console.log("Criando diretórios temporários...");
 
   const folderName = forkName + "-" + username;
@@ -55,7 +57,7 @@ export async function clone(forkName, username) {
   );
 }
 
-export async function deleteFiles(forkName) {
+export function deleteFiles(forkName) {
   console.log(`Iniciando remoção dos arquivos da aplicação...`);
 
   const deleteIgnore = ["node_modules", "package-lock.json", "README.md"];
@@ -65,7 +67,7 @@ export async function deleteFiles(forkName) {
   });
 }
 
-export async function commit(forkName) {
+export function commitAndPush(forkName) {
   console.log("Criando commit de revisão de código...");
 
   shell.cd(forkName);
@@ -78,7 +80,29 @@ export async function commit(forkName) {
   shell.cd("..");
 }
 
-export async function clear() {
+export function clear() {
   console.log("Removendo diretórios temporários...");
   shell.rm("-rf", "*");
+}
+
+export function createPullRequest(repoName, username) {
+  console.log(`Criando pull request em "${repoName}"...`);
+
+  const body = {
+    title: "Preparando revisão do código",
+    head: `${process.env.GIT_NAME}:main`,
+    base: "main",
+  };
+
+  const config = {
+    headers: {
+      Authorization: `token ${process.env.GIT_TOKEN}`,
+    },
+  };
+
+  return axios.post(
+    `https://api.github.com/repos/${username}/${repoName}/pulls`,
+    body,
+    config
+  );
 }

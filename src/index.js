@@ -8,8 +8,9 @@ import {
   fork,
   clone,
   deleteFiles,
-  commit,
+  commitAndPush,
   clear,
+  createPullRequest,
 } from "./repositories.js";
 
 async function main() {
@@ -47,7 +48,8 @@ async function codeReview() {
 
         await clone(forkName, username);
         await deleteFiles(forkName);
-        await commit(forkName);
+        await commitAndPush(forkName);
+        await createPullRequest(repoName, username);
       } catch (err) {
         console.log(err);
         return false;
