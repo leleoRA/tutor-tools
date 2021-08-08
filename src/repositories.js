@@ -80,11 +80,6 @@ export function commitAndPush(forkName) {
   shell.cd("..");
 }
 
-export function clear() {
-  console.log("Removendo diretórios temporários...");
-  shell.rm("-rf", "*");
-}
-
 export function createPullRequest(repoName, username) {
   console.log(`Criando pull request em "${repoName}"...`);
 
@@ -105,4 +100,9 @@ export function createPullRequest(repoName, username) {
     body,
     config
   );
+}
+
+export function clear() {
+  console.log("Removendo diretórios temporários...");
+  shell.rm("-rf", "*");
 }
