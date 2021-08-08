@@ -1,74 +1,61 @@
 import "./setup.js";
 
-import axios from "axios";
-import shell from "shelljs";
+import readlineSync from "readline-sync";
 
-import { getRepositories, getRepoInfs } from "./repositories.js";
+import {
+  getRepositories,
+  getRepoInfs,
+  fork,
+  clone,
+  deleteFiles,
+  commit,
+  clear,
+} from "./repositories.js";
 
 async function main() {
-  const repositoriesList = getRepositories();
+  const operations = ["Revisão de Entrega", "Revisão de Código"];
 
-  const body = {};
-
-  const config = {
-    headers: {
-      Authorization: process.env.GIT_TOKEN,
-    },
-  };
-
-  await Promise.all(
-    repositoriesList.map(async (repoURL) => {
-      const { username, repoName } = getRepoInfs(repoURL);
-
-      console.log(
-        `Iniciando Fork do repositório ${repoName} do usuário ${username}...`
-      );
-
-      try {
-        const fork = await axios.post(
-          `https://api.github.com/repos/${username}/${repoName}/forks`,
-          body,
-          config
-        );
-
-        const forkName = fork.data.name;
-        const folderName = username + "-" + forkName;
-
-        shell.cd("temp");
-        shell.mkdir(folderName);
-        shell.cd(folderName);
-
-        console.log(`Iniciando Clone do repositório ${forkName}...`);
-
-        shell.exec(
-          `git clone https://github.com/${process.env.GIT_NAME}/${forkName}`
-        );
-
-        const deleteIgnore = ["node_modules", "package.lock.json"];
-
-        console.log(`Iniciando remoção dos arquivos...`);
-
-        shell.ls(forkName).forEach((item) => {
-          if (!deleteIgnore.includes(item))
-            shell.rm("-rf", forkName + "/" + item);
-        });
-
-        shell.cd(forkName);
-
-        shell.exec("git add .");
-        shell.exec("git commit -m 'Preparando revisão de código'");
-        shell.exec("git push");
-
-        shell.cd("..");
-        shell.cd("..");
-      } catch (err) {
-        console.log(err);
-      }
-    })
+  const index = readlineSync.keyInSelect(
+    operations,
+    "Qual operação deseja realizar?"
   );
 
-  console.log("Removendo diretórios temporários...");
-  shell.rm("-rf", "*");
+  switch (index + 1) {
+    case 1:
+      await deliveryReview();
+      break;
+
+    case 2:
+      await codeReview();
+      break;
+  }
 }
 
 main();
+
+async function deliveryReview() {}
+
+async function codeReview() {
+  const repositoriesList = getRepositories();
+
+  const success = await Promise.all(
+    repositoriesList.map(async (repoURL) => {
+      const { username, repoName } = getRepoInfs(repoURL);
+
+      try {
+        const forkName = await fork(repoName, username);
+
+        await clone(forkName);
+        await deleteFiles(forkName);
+        await commit(forkName);
+      } catch (err) {
+        console.log(err);
+        return false;
+      }
+
+      return true;
+    })
+  );
+
+  if (success) await clear();
+}
