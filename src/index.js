@@ -45,7 +45,7 @@ async function codeReview() {
       try {
         const forkName = await fork(repoName, username);
 
-        await clone(forkName);
+        await clone(forkName, username);
         await deleteFiles(forkName);
         await commit(forkName);
       } catch (err) {

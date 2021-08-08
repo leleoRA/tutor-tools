@@ -26,15 +26,13 @@ export async function fork(repoName, username) {
 
   const config = {
     headers: {
-      Authorization: process.env.GIT_TOKEN,
+      Authorization: `token ${process.env.GIT_TOKEN}`,
     },
   };
 
-  await axios
+  return axios
     .post(
-      `https://api.github.com/repos/${username}/${repoName}/forks`,
-      body,
-      config
+      `https://api.github.com/repos/${username}/${repoName}/forks`, body, config
     )
     .then(({ data }) => {
       return data.name;
@@ -60,7 +58,7 @@ export async function clone(forkName, username) {
 export async function deleteFiles(forkName) {
   console.log(`Iniciando remoção dos arquivos da aplicação...`);
 
-  const deleteIgnore = ["node_modules", "package.lock.json"];
+  const deleteIgnore = ["node_modules", "package-lock.json", "README.md"];
 
   shell.ls(forkName).forEach((item) => {
     if (!deleteIgnore.includes(item)) shell.rm("-rf", forkName + "/" + item);
@@ -73,7 +71,7 @@ export async function commit(forkName) {
   shell.cd(forkName);
 
   shell.exec("git add .");
-  shell.exec("git commit -m 'Preparando revisão de código'");
+  shell.exec('git commit -m "Preparando revisão de código"');
   shell.exec("git push");
 
   shell.cd("..");
