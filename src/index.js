@@ -13,6 +13,7 @@ import {
   createPullRequest,
 } from "./repositories.js";
 
+import repositories from "./data/links.js";
 async function main() {
   const operations = ["Revisão de Entrega", "Revisão de Código"];
 
@@ -37,7 +38,7 @@ main();
 async function deliveryReview() {}
 
 async function codeReview() {
-  const repositoriesList = getRepositories();
+  const repositoriesList = repositories;
 
   const success = await Promise.all(
     repositoriesList.map(async (repoURL) => {

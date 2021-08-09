@@ -45,10 +45,10 @@ export function clone(forkName, username) {
   console.log("Criando diretórios temporários...");
 
   const folderName = forkName + "-" + username;
-
+  const formattedFolderName= folderName.replace("_","-");
   shell.cd("temp");
-  shell.mkdir(folderName);
-  shell.cd(folderName);
+  shell.mkdir(formattedFolderName);
+  shell.cd(formattedFolderName);
 
   console.log(`Iniciando clone do repositório "${forkName}"...`);
 
