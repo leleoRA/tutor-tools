@@ -16,5 +16,8 @@
     "dotenv": "^10.0.0",
     "readline-sync": "^1.4.10",
     "shelljs": "^0.8.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
   }
 }
