@@ -14,8 +14,10 @@ import {
 } from "./repositories.js";
 
 import repositories from "./data/links.js";
+import { addItem } from './notion.js'
+
 async function main() {
-  const operations = ["Revisão de Entrega", "Revisão de Código"];
+  const operations = ["Revisão de Entrega", "Revisão de Código", "Teste Notion"];
 
   const index = readlineSync.keyInSelect(
     operations,
@@ -29,6 +31,10 @@ async function main() {
 
     case 2:
       await codeReview();
+      break;
+    
+    case 3:
+      await addItem('Yurts in Big Sur, California');
       break;
   }
 }
