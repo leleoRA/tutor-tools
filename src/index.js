@@ -14,7 +14,7 @@ import {
 } from "./repositories.js";
 
 import repositories from "./data/links.js";
-import { addItem } from './notion.js'
+import { addItem, createTemplate } from './notion.js'
 
 async function main() {
   const operations = ["Revisão de Entrega", "Revisão de Código", "Teste Notion"];
@@ -34,7 +34,7 @@ async function main() {
       break;
     
     case 3:
-      await addItem('Yurts in Big Sur, California');
+      await createTemplate();
       break;
   }
 }
