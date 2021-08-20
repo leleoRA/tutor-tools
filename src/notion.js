@@ -1,6 +1,7 @@
 import { Client } from "@notionhq/client"
+import './setup.js';
 
-const notion = new Client({ auth: process.env.NOTION_KEY })
+const notion = new Client({ auth: process.env.NOTION_TOKEN })
 
 const databaseId = process.env.NOTION_DATABASE_ID
 
@@ -99,3 +100,5 @@ export async function createTemplate() {
     console.error(error)
   }
 }
+
+createTemplate();

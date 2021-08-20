@@ -3,8 +3,7 @@ import creds from '../../client_secret.js';
 
 const spreadsheetId = '1CMrGiaLQ8c8P8HxQF0dzn8nGKN1uiy2Dj_645KX_IpY'
 const sheetTitle = 'Sing me a song';
-// const rangeRequisits = 'E2:J2';
-// const rangeBonus = 'M2:R2';
+
 const initialColumnRequisit = 4;
 const endColumnRequisit = 10;
 const rowRequisit = 1;
@@ -30,8 +29,6 @@ async function main(){
     });
   }
   console.log(requisitsProject)
-  // const requisitsProject = sheet.getCellByA1(rangeRequisits);
-
   return true;
 }
 main()
