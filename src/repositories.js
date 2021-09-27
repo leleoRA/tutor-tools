@@ -106,18 +106,10 @@ export function createPullRequest(repoName, username) {
 export function clear() {
   console.log("Removendo diretórios temporários...");
   const system = osName();
-  let pathDirectoryList;
-  let actualDirectory;
+  const separator = system.includes('Windows') ? "\\" : "/";
 
-  if(system.includes('Windows')) {  
-    pathDirectoryList = (shell.pwd()).split("\\");
-    console.log(pathDirectoryList);
-    actualDirectory = pathDirectoryList.pop();
-    console.log(actualDirectory);
-  } else {
-    pathDirectoryList = (shell.pwd()).split("/");
-    actualDirectory = pathDirectoryList.pop();
-  }
+  const pathDirectoryList = (shell.pwd()).split(separator);
+  const actualDirectory = pathDirectoryList.pop();
 
   if (actualDirectory === "temp"){
     shell.rm("-rf", "*");
