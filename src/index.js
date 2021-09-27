@@ -58,6 +58,7 @@ async function codeReview() {
 
       return true;
     })
-  ).then(clear());
+  );
 
+  clear();
 }
