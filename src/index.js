@@ -40,7 +40,7 @@ async function deliveryReview() {}
 async function codeReview() {
   const repositoriesList = repositories;
 
-  const success = await Promise.all(
+  await Promise.all(
     repositoriesList.map(async (repoURL) => {
       const { username, repoName } = getRepoInfs(repoURL);
 
@@ -60,5 +60,5 @@ async function codeReview() {
     })
   );
 
-  if (success) await clear();
+  clear();
 }

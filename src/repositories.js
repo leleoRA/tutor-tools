@@ -1,6 +1,7 @@
 import fs from "fs";
 import axios from "axios";
 import shell from "shelljs";
+import osName from "os-name";
 
 export function getRepositories() {
   const fileData = fs.readFileSync("src/data/repositories.txt", "utf-8");
@@ -104,8 +105,12 @@ export function createPullRequest(repoName, username) {
 
 export function clear() {
   console.log("Removendo diretórios temporários...");
-  const pathDirectoryList = (shell.pwd()).split("/");
-  const actualDirectory   = pathDirectoryList[pathDirectoryList.length - 1] ;
+  const system = osName();
+  const separator = system.includes('Windows') ? "\\" : "/";
+
+  const pathDirectoryList = (shell.pwd()).split(separator);
+  const actualDirectory = pathDirectoryList.pop();
+
   if (actualDirectory === "temp"){
     shell.rm("-rf", "*");
   }
