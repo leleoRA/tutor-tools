@@ -14,6 +14,8 @@ import {
 } from "./repositories.js";
 
 import repositories from "./data/links.js";
+import NotFoundError from "./errors/NotFound.js";
+
 async function main() {
   const operations = ["Revisão de Entrega", "Revisão de Código"];
 
@@ -39,6 +41,9 @@ async function deliveryReview() {}
 
 async function codeReview() {
   const repositoriesList = repositories;
+  if(repositoriesList.length === 0) {
+    throw new NotFoundError("repositories");
+  }
 
   const success = await Promise.all(
     repositoriesList.map(async (repoURL) => {
@@ -46,11 +51,11 @@ async function codeReview() {
 
       try {
         const forkName = await fork(repoName, username);
-
-        await clone(forkName, username);
-        await deleteFiles(forkName);
-        await commitAndPush(forkName);
-        await createPullRequest(repoName, username);
+        console.log(forkName);
+        // await clone(forkName, username);
+        // await deleteFiles(forkName);
+        // await commitAndPush(forkName);
+        // await createPullRequest(repoName, username);
       } catch (err) {
         console.log(err);
         return false;

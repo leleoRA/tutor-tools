@@ -1,6 +1,7 @@
 import fs from "fs";
 import axios from "axios";
 import shell from "shelljs";
+import CanNotFork from "./errors/CanNotFork.js";
 
 export function getRepositories() {
   const fileData = fs.readFileSync("src/data/repositories.txt", "utf-8");
@@ -30,7 +31,7 @@ export function fork(repoName, username) {
     },
   };
 
-  return axios
+  const forkName = axios
     .post(
       `https://api.github.com/repos/${username}/${repoName}/forks`,
       body,
@@ -38,7 +39,15 @@ export function fork(repoName, username) {
     )
     .then(({ data }) => {
       return data.name;
+    })
+    .catch(({ response }) => {
+      throw new CanNotFork(repoName, username, response.status);
     });
+    
+
+  return forkName;
+
+
 }
 
 export function clone(forkName, username) {
@@ -85,8 +94,8 @@ export function createPullRequest(repoName, username) {
 
   const body = {
     title: "Preparando revisão do código",
-    head: `${process.env.GIT_NAME}:main`,
-    base: "main",
+    head: `${process.env.GIT_NAME}:master`,
+    base: "master",
   };
 
   const config = {
