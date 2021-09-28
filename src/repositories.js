@@ -2,6 +2,7 @@ import fs from "fs";
 import axios from "axios";
 import shell from "shelljs";
 import CanNotFork from "./errors/CanNotFork.js";
+import CanNotClone from "./errors/CanNotClone.js";
 
 export function getRepositories() {
   const fileData = fs.readFileSync("src/data/repositories.txt", "utf-8");
@@ -43,11 +44,8 @@ export function fork(repoName, username) {
     .catch(({ response }) => {
       throw new CanNotFork(repoName, username, response.status);
     });
-    
 
   return forkName;
-
-
 }
 
 export function clone(forkName, username) {
@@ -63,7 +61,14 @@ export function clone(forkName, username) {
 
   shell.exec(
     `git clone https://github.com/${process.env.GIT_NAME}/${forkName}`
-  );
+  );  
+
+  const directoryName = shell.ls()[0];
+
+  if(directoryName !== forkName) {
+    throw new CanNotClone(forkName, username);
+  }
+  
 }
 
 export function deleteFiles(forkName) {

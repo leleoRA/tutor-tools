@@ -51,11 +51,11 @@ async function codeReview() {
 
       try {
         const forkName = await fork(repoName, username);
-        console.log(forkName);
-        // await clone(forkName, username);
-        // await deleteFiles(forkName);
-        // await commitAndPush(forkName);
-        // await createPullRequest(repoName, username);
+
+        await clone(forkName, username);
+        await deleteFiles(forkName);
+        await commitAndPush(forkName);
+        await createPullRequest(repoName, username);
       } catch (err) {
         console.log(err);
         return false;

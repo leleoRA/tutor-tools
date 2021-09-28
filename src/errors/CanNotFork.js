@@ -3,6 +3,5 @@ export default class CanNotFork extends Error {
       super(`Não foi possível forkar o repositório ${repoName} de ${username}. 
       Status do erro: ${status}`
         );
-      this.name = "CanNotForkError";
     }
   }
