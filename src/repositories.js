@@ -3,6 +3,7 @@ import axios from "axios";
 import shell from "shelljs";
 import CanNotFork from "./errors/CanNotFork.js";
 import CanNotClone from "./errors/CanNotClone.js";
+import CanNotCommitAndPush from "./errors/CanNotCommitAndPush.js";
 
 export function getRepositories() {
   const fileData = fs.readFileSync("src/data/repositories.txt", "utf-8");
@@ -81,17 +82,24 @@ export function deleteFiles(forkName) {
   });
 }
 
-export function commitAndPush(forkName) {
+export function commitAndPush(forkName, username) {
   console.log("Criando commit de revisão de código...");
 
   shell.cd(forkName);
 
-  shell.exec("git add .");
-  shell.exec('git commit -m "Preparando revisão de código"');
-  shell.exec("git push");
+  // shell.exec("git add .");
+  const commitResponse = shell.exec(
+    'git commit -m "Preparando revisão de código"',
+    { silent : true }
+  );
+  const pushResponse = shell.exec("git push");
 
   shell.cd("..");
   shell.cd("..");
+
+  if(commitResponse.code !== 0 || pushResponse.code !== 0) {
+    throw new CanNotCommitAndPush(forkName, username);
+  }
 }
 
 export function createPullRequest(repoName, username) {

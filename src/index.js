@@ -54,7 +54,7 @@ async function codeReview() {
 
         await clone(forkName, username);
         await deleteFiles(forkName);
-        await commitAndPush(forkName);
+        await commitAndPush(forkName, username);
         await createPullRequest(repoName, username);
       } catch (err) {
         console.log(err);
