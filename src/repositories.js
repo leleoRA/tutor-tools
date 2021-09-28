@@ -114,4 +114,5 @@ export function clear() {
   if (actualDirectory === "temp"){
     shell.rm("-rf", "*");
   }
+  
 }
