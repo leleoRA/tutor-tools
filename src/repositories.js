@@ -97,8 +97,9 @@ export function commitAndPush(forkName, username) {
 
   shell.cd("..");
   shell.cd("..");
-
-  if(commitResponse.code !== 0 || pushResponse.code !== 0) {
+  const failCommit = commitResponse.code !== 0;
+  const failPush = pushResponse.code !== 0;
+  if(failCommit || failPush) {
     throw new CanNotCommitAndPush(forkName, username);
   }
 }
