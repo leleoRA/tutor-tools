@@ -8,9 +8,15 @@ const initialColumnRequisit = 4;
 const endColumnRequisit = 10;
 const rowRequisit = 1;
 
-const requisitsProject = []
+const endRowSheet = 52
 
-export async function main(){
+const nameColumn = 0
+const tutorColumn = 1
+const expectationColumn = 11
+
+const feedbacks = {}
+
+export default async function main(){
   var doc = new GoogleSpreadsheet(spreadsheetId);
 
   doc.useServiceAccountAuth(creds);  
@@ -19,16 +25,40 @@ export async function main(){
 
   const sheet = doc.sheetsByTitle[sheetTitle]; 
   
-  await sheet.loadCells({startColumnIndex:initialColumnRequisit,endColumnIndex:endColumnRequisit});
+  await sheet.loadCells({startColumnIndex:nameColumn, endColumnIndex:20});
 
-  for (let i = initialColumnRequisit; i < endColumnRequisit; i++) {
-    const requisit = sheet.getCell(rowRequisit,i);
-    requisitsProject.push({
-      "description":requisit.value,
-      "note":requisit.note
-    });
+  for(let row = 3; row < endRowSheet; row ++){
+    const requisitsProject = []
+
+    for (let i = initialColumnRequisit; i < endColumnRequisit; i++) {
+      const requisit = sheet.getCell(rowRequisit,i);
+      requisitsProject.push({
+        "description":requisit.value,
+        "note":requisit.note
+      });
+    }
+
+    const finalObj = {
+      student: sheet.getCell(row, nameColumn).value,
+      title: sheetTitle,
+      deliveryReview: {
+        evaluation: sheet.getCell(3, expectationColumn).value,
+        requisit : requisitsProject
+      },
+      codeReview: {
+        evaluation: 'disponível no Pull Request no GitHub (Pode fechar o Pull Request depois de ler, clicando em Close Pull Request.)'
+      }
+    }
+    
+    const tutor = sheet.getCell(row, tutorColumn).value
+
+    if(feedbacks[tutor]){
+      feedbacks[tutor].push(finalObj)
+    } else {
+      feedbacks[tutor] = [finalObj]
+    }
   }
-  // console.log(requisitsProject)
-  return requisitsProject;
+
+  return feedbacks;
 }
 main()
