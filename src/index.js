@@ -3,7 +3,6 @@ import "./setup.js";
 import readlineSync from "readline-sync";
 
 import {
-  getRepositories,
   getRepoInfs,
   fork,
   clone,
