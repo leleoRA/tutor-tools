@@ -1,135 +1,49 @@
 import { Client } from "@notionhq/client"
 import './setup.js';
-import { main } from './feature_notion/spreadsheet.js'
+import {requestProject} from './feature_notion/faker.js';
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN })
 
 const databaseId = process.env.NOTION_DATABASE_ID
 
-export async function addItem(text) {
-  try {
-    const response = await notion.pages.create({
-      parent: { database_id: databaseId },
-      properties: {
-        title: { 
-          title:[
-            {
-              "text": {
-                "content": text
-              }
-            }
-          ]
-        }
-      },
-    })
-    console.log(response)
-    console.log("Success! Entry added.")
-  } catch (error) {
-    console.error(error.body)
-  }
+async function main(){
+  const responseInitial = await initialTemplateProject();
+  console.log("Other id =>",responseInitial.results[0].id)
+  const lastId = await findLastId(responseInitial.results[0].id);
+  console.log("my id =>",lastId) 
+  addRequestsProject(lastId);
+
 }
 
-export async function createTemplate() {
-  const criteria = await main()
-  const formatedCriteria = criteria.map(individualCriteria => ({
-    type: "bulleted_list_item",
-    bulleted_list_item: {
-        text: [{
-          type: "text",
-          text: {
-              content: individualCriteria.description,
-          }
-        }]
-    }
-  }))
-
+export async function initialTemplateProject() {
+  const nomeAluno = "Thiago Paiva"
+  const nomeProjeto = '### Semana #17-Sing me a Song'
+  const resultadoAluno = "Acima das expectativas"
   try {
     const response = await notion.blocks.children.append({
       block_id: databaseId,
       children: [
-        {
-          object: "block",
-          type: "heading_1",
-          heading_1: {
-            text: [{
-              type: "text", 
-              text: { 
-                content: "Feedback de entrega"
-              } 
-            }]
-          }
-        },
         {
           type: "toggle",
           toggle: {
             text: [{ 
               type: "text", 
               text: { 
-                content: "Avaliação geral"
+                content: nomeAluno
               },
             }],
             children: [
               {
-                  type: "bulleted_list_item",
-                  bulleted_list_item: {
-                      text: [{
-                        type: "text",
-                        text: {
-                            content: "Acima das expectativas",
-                        }
-                      }]
-                  }
-              }
-            ]
-          }
-        },
-        {
-          type: "toggle",
-          toggle: {
-            text: [{ 
-              type: "text", 
-              text: { 
-                content: "Quais foram os requisitos avaliados nesse projeto?"
+                type:'heading_3',
+                heading_3:{
+                  text:[{
+                    type:'text',
+                    text:{
+                      content:nomeProjeto
+                    }
+                  }]
+                }
               },
-            }],
-            children: formatedCriteria
-          }
-        }
-    ]
-  })
-    console.log("Success! Entry added.")
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-export async function createTemplateProject() {
-  try {
-    const response = await notion.blocks.children.append({
-      block_id: databaseId,
-      children: [
-        {
-          object: "block",
-          type: "heading_1",
-          heading_1: {
-            text: [{
-              type: "text", 
-              text: { 
-                content: "Feedback Github"
-              } 
-            }]
-          }
-        },
-        {
-          type: "toggle",
-          toggle: {
-            text: [{ 
-              type: "text", 
-              text: { 
-                content: "Thiago Paiva"
-              },
-            }],
-            children: [
               {
                 type: "toggle",
                 toggle: {
@@ -141,27 +55,40 @@ export async function createTemplateProject() {
                   }],
                   children:[
                     {
-                      type:'heading_3',
-                      heading_3:{
+                      type:'bulleted_list_item',
+                      bulleted_list_item:{
                         text:[{
                           type:'text',
                           text:{
-                            content:'### Semana #17-Sing me a Song'
+                            content: 'Avaliação Geral: '+ resultadoAluno
                           }
                         }]
                       }
                     },
                     {
-                      type:"toggle",
+                      type: "toggle",
                       toggle: {
-                        text:[{
-                          type:"text",
-                          text:{
-                            content:"Quais foram os requisitos avaliados nesse projeto?"
+                        text: [{
+                          type: "text",
+                          text: {
+                            content: "Quais foram os requisitos avaliados nesse projeto?",
+                            link: null
                           }
-                        }]
+                        }],
                       }
-                    }
+                    },
+                    {
+                      type: "toggle",
+                      toggle: {
+                        text: [{
+                          type: "text",
+                          text: {
+                            content: "Avaliação por requisito",
+                            link: null
+                          }
+                        }],
+                      }
+                    },
                   ]
                 },
               }
@@ -170,12 +97,87 @@ export async function createTemplateProject() {
         },
 
     ]
-  })
-    console.log("Success! Entry added.")
+    })
+    return response;
   } catch (error) {
     console.error(error)
   }
 }
 
-createTemplateProject();
+
+async function addRequestsProject(id){
+  try{
+    const response = await notion.blocks.children.append({
+
+      block_id:id,
+      children: createTemplateRequestProject()
+    })
+  }catch(e){
+    
+    console.log("Deu ruim na gamb",e)
+  }
+}
+function createTemplateRequestProject(){
+  const requestProjectFormated = requestProject.map((request) =>{
+    if (request.note === undefined){
+      return{
+        type:'bulleted_list_item',
+        bulleted_list_item:{
+          text:[{
+            type:'text',
+            text:{
+              content: request.description
+            }
+          }],
+        }
+      }
+    }
+    return{
+      type:'toggle',
+      toggle:{
+        text:[{
+          type:'text',
+          text:{
+            content: request.description
+          }
+        }],
+        children:[{
+          type: "bulleted_list_item",
+          bulleted_list_item: {
+            text: [{
+              type: "text",
+              text: {
+                content: request.note,
+              }
+            }],
+          }
+        }]
+      }
+    }
+  })
+  return requestProjectFormated;
+  
+}
+async function findLastId(id){
+  let lastid = id;
+  try {
+    const response = await notion.blocks.children.list({block_id:id})
+    while(response.results.length >= 1){
+      const response = await notion.blocks.children.list({block_id:lastid})
+      if (response.results.length > 1){
+        lastid = response.results[1].id;
+      }else{
+        lastid = response.results[0].id;
+      }
+    }
+  } catch (error) {
+    // console.log(error)
+  }
+  return lastid
+}
+main()
+// findLastId("c576e080-a81e-4274-86ee-10bfb8463364")
+// get()
+// lalala()
+// initialTemplateProject();
 // createTemplate()
