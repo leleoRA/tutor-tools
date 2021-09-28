@@ -1,7 +1,3 @@
-const repositories = [
-  "https://github.com/celsops/agente-frontend",
-  "https://github.com/celsops/AlagoasNoticias",
-  "https://github.com/bootcamp-ra/pokedex",
-];
+const repositories = [];
 
 export default repositories;
