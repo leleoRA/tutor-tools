@@ -8,7 +8,7 @@
     "start": "node ./src/index.js",
     "dev": "nodemon ./src/index.js",
     "google": "node ./src/feature_notion/spreadsheet.js",
-    "notion":"node ./src/notion.js"
+    "notion": "node ./src/notion.js"
   },
   "keywords": [],
   "author": "",
@@ -20,8 +20,8 @@
     "fs": "^0.0.1-security",
     "google-spreadsheet": "^3.1.15",
     "googleapis": "39",
+    "readline-sync": "^1.4.10",
     "shelljs": "^0.8.4"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }

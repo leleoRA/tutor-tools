@@ -10,7 +10,7 @@ const rowRequisit = 1;
 
 const requisitsProject = []
 
-async function main(){
+export async function main(){
   var doc = new GoogleSpreadsheet(spreadsheetId);
 
   doc.useServiceAccountAuth(creds);  
@@ -28,7 +28,7 @@ async function main(){
       "note":requisit.note
     });
   }
-  console.log(requisitsProject)
-  return true;
+  // console.log(requisitsProject)
+  return requisitsProject;
 }
 main()
