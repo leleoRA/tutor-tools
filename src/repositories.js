@@ -115,7 +115,6 @@ export function clear() {
     shell.rm("-rf", "*");
   }
 }
-=======
 import fs from "fs";
 import axios from "axios";
 import shell from "shelljs";
