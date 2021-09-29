@@ -128,13 +128,3 @@ export async function createPullRequest(repoName, username) {
     config
   );
 }
-
-export function clear() {
-  console.log("Removendo diretórios temporários...");
-  const pathDirectoryList = shell.pwd().split("/");
-  const actualDirectory = pathDirectoryList[pathDirectoryList.length - 1];
-  if (actualDirectory === "temp") {
-    shell.rm("-rf", "*");
-  }
-  
-}
