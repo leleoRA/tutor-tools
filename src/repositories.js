@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import fs from "fs";
 import axios from "axios";
 import shell from "shelljs";
@@ -234,4 +233,3 @@ export function clear() {
     shell.rm("-rf", "*");
   }
 }
->>>>>>> ab87e154dce1a27c0695855323fe28126a4f3631
