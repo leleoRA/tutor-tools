@@ -1,6 +1,7 @@
 import fs from "fs";
 import axios from "axios";
 import shell from "shelljs";
+import osName from "os-name";
 
 export function getRepositories() {
   const fileData = fs.readFileSync("src/data/repositories.txt", "utf-8");
