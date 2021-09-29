@@ -1,3 +1,4 @@
 node_modules
 .env
 yarn.lock
+client_secret_google.js
