@@ -1,6 +1,4 @@
-const repositories = [
-  "https://github.com/celsops/teste",
-  "https://github.com/celsops/servletJava",
-];
+const repositories= [
+]
 
 export default repositories;
