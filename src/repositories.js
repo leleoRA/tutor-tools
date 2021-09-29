@@ -17,6 +17,31 @@ export function getRepoInfs(repoURL) {
   };
 }
 
+export async function getRepoMainBranch(username, repoName) {
+  console.log(`Buscando pela branch principal em ${repoName}...`);
+
+  return request().then(({ data }) => {
+    for (let branch of data) {
+      if (branch.name === "main" || branch.name === "master") {
+        return branch.name;
+      }
+    }
+  });
+
+  async function request() {
+    const config = {
+      headers: {
+        Authorization: `token ${process.env.GIT_TOKEN}`,
+      },
+    };
+
+    return axios.get(
+      `https://api.github.com/repos/${username}/${repoName}/branches`,
+      config
+    );
+  }
+}
+
 export function fork(repoName, username) {
   console.log(
     `Iniciando fork do repositório "${repoName}" do usuário "${username}"...`
@@ -45,7 +70,7 @@ export function clone(forkName, username) {
   console.log("Criando diretórios temporários...");
 
   const folderName = forkName + "-" + username;
-  const formattedFolderName= folderName.replace("_","-");
+  const formattedFolderName = folderName.replace("_", "-");
   shell.cd("temp");
   shell.mkdir(formattedFolderName);
   shell.cd(formattedFolderName);
@@ -80,13 +105,15 @@ export function commitAndPush(forkName) {
   shell.cd("..");
 }
 
-export function createPullRequest(repoName, username) {
+export async function createPullRequest(repoName, username) {
   console.log(`Criando pull request em "${repoName}"...`);
+
+  const mainBranch = await getRepoMainBranch(username, repoName);
 
   const body = {
     title: "Preparando revisão do código",
-    head: `${process.env.GIT_NAME}:main`,
-    base: "main",
+    head: `${process.env.GIT_NAME}:${mainBranch}`,
+    base: mainBranch,
   };
 
   const config = {
