@@ -1,6 +1,7 @@
 import fs from "fs";
 import axios from "axios";
 import shell from "shelljs";
+import osName from "os-name";
 
 export function getRepositories() {
   const fileData = fs.readFileSync("src/data/repositories.txt", "utf-8");
@@ -15,31 +16,6 @@ export function getRepoInfs(repoURL) {
     username: urlInfs[3],
     repoName: urlInfs[4],
   };
-}
-
-export async function getRepoMainBranch(username, repoName) {
-  console.log(`Buscando pela branch principal em ${repoName}...`);
-
-  return request().then(({ data }) => {
-    for (let branch of data) {
-      if (branch.name === "main" || branch.name === "master") {
-        return branch.name;
-      }
-    }
-  });
-
-  async function request() {
-    const config = {
-      headers: {
-        Authorization: `token ${process.env.GIT_TOKEN}`,
-      },
-    };
-
-    return axios.get(
-      `https://api.github.com/repos/${username}/${repoName}/branches`,
-      config
-    );
-  }
 }
 
 export function fork(repoName, username) {
@@ -70,7 +46,7 @@ export function clone(forkName, username) {
   console.log("Criando diretórios temporários...");
 
   const folderName = forkName + "-" + username;
-  const formattedFolderName = folderName.replace("_", "-");
+  const formattedFolderName= folderName.replace("_","-");
   shell.cd("temp");
   shell.mkdir(formattedFolderName);
   shell.cd(formattedFolderName);
@@ -105,15 +81,13 @@ export function commitAndPush(forkName) {
   shell.cd("..");
 }
 
-export async function createPullRequest(repoName, username) {
+export function createPullRequest(repoName, username) {
   console.log(`Criando pull request em "${repoName}"...`);
-
-  const mainBranch = await getRepoMainBranch(username, repoName);
 
   const body = {
     title: "Preparando revisão do código",
-    head: `${process.env.GIT_NAME}:${mainBranch}`,
-    base: mainBranch,
+    head: `${process.env.GIT_NAME}:main`,
+    base: "main",
   };
 
   const config = {
@@ -131,10 +105,13 @@ export async function createPullRequest(repoName, username) {
 
 export function clear() {
   console.log("Removendo diretórios temporários...");
-  const pathDirectoryList = shell.pwd().split("/");
-  const actualDirectory = pathDirectoryList[pathDirectoryList.length - 1];
-  if (actualDirectory === "temp") {
+  const system = osName();
+  const separator = system.includes('Windows') ? "\\" : "/";
+
+  const pathDirectoryList = (shell.pwd()).split(separator);
+  const actualDirectory = pathDirectoryList.pop();
+
+  if (actualDirectory === "temp"){
     shell.rm("-rf", "*");
   }
-  
 }
