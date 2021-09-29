@@ -102,3 +102,16 @@ export function createPullRequest(repoName, username) {
     config
   );
 }
+
+export function clear() {
+  console.log("Removendo diretórios temporários...");
+  const system = osName();
+  const separator = system.includes('Windows') ? "\\" : "/";
+
+  const pathDirectoryList = (shell.pwd()).split(separator);
+  const actualDirectory = pathDirectoryList.pop();
+
+  if (actualDirectory === "temp"){
+    shell.rm("-rf", "*");
+  }
+}
