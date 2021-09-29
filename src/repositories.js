@@ -6,12 +6,6 @@ import CanNotClone from "./errors/CanNotClone.js";
 import CanNotCommitAndPush from "./errors/CanNotCommitAndPush.js";
 import CanNotPullRequest from "./errors/CanNotPullRequest.js";
 
-export function getRepositories() {
-  const fileData = fs.readFileSync("src/data/repositories.txt", "utf-8");
-  const repositoriesList = fileData.split("\n");
-  return repositoriesList.slice(0, repositoriesList.length);
-}
-
 export function getRepoInfs(repoURL) {
   const urlInfs = repoURL.split("/");
 
@@ -104,13 +98,15 @@ export function commitAndPush(forkName, username) {
   }
 }
 
-export function createPullRequest(repoName, username) {
+export async function createPullRequest(repoName, username) {
   console.log(`Criando pull request em "${repoName}"...`);
+
+  const mainBranch = await getRepoMainBranch(username, repoName);
 
   const body = {
     title: "Preparando revisão do código",
-    head: `${process.env.GIT_NAME}:master`,
-    base: "master",
+    head: `${process.env.GIT_NAME}:${mainBranch}`,
+    base: mainBranch,
   };
 
   const config = {
@@ -125,14 +121,50 @@ export function createPullRequest(repoName, username) {
     config
   ).catch(({ response }) => {
     throw new CanNotPullRequest(repoName, username, response.status);
-  });;
+  });
 }
 
 export function clear() {
   console.log("Removendo diretórios temporários...");
-  const pathDirectoryList = (shell.pwd()).split("/");
-  const actualDirectory   = pathDirectoryList[pathDirectoryList.length - 1] ;
-  if (actualDirectory === "temp"){
+  const system = osName();
+  const separator = system.includes("Windows") ? "\\" : "/";
+
+  const pathDirectoryList = shell.pwd().split(separator);
+  const actualDirectory = pathDirectoryList.pop();
+
+  if (actualDirectory === "temp") {
     shell.rm("-rf", "*");
   }
+}
+
+export async function getRepoMainBranch(username, repoName) {
+  console.log(`Buscando pela branch principal em ${repoName}...`);
+
+  return request().then(({ data }) => {
+    for (let branch of data) {
+      if (branch.name === "main" || branch.name === "master") {
+        return branch.name;
+      }
+    }
+  });
+
+  async function request() {
+    const config = {
+      headers: {
+        Authorization: `token ${process.env.GIT_TOKEN}`,
+      },
+    };
+
+    return axios.get(
+      `https://api.github.com/repos/${username}/${repoName}/branches`,
+      config
+    );
+  }
+}
+
+//utilizada em versão antiga
+export function getRepositories() {
+  const fileData = fs.readFileSync("src/data/repositories.txt", "utf-8");
+  const repositoriesList = fileData.split("\n");
+  return repositoriesList.slice(0, repositoriesList.length);
 }

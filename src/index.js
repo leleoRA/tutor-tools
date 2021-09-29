@@ -5,7 +5,6 @@ import { validateGitHubToken, ValidationError } from "validate-github-token";
 import axios from "axios";
 
 import {
-  getRepositories,
   getRepoInfs,
   fork,
   clone,
@@ -54,7 +53,7 @@ async function codeReview() {
     throw new NotFoundError("repositórios");
   }
 
-  const success = await Promise.all(
+  await Promise.all(
     repositoriesList.map(async (repoURL) => {
       const { username, repoName } = getRepoInfs(repoURL);
 
@@ -74,7 +73,7 @@ async function codeReview() {
     })
   );
 
-  if (success) await clear();
+  clear();
 }
 
 async function gitHubTokenAuthenticate() {
