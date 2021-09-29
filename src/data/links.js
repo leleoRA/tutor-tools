@@ -1,6 +1,6 @@
 const repositories = [
-  "https://github.com/celsops/teste",
-  "https://github.com/celsops/servletJava",
+  "https://github.com/celsops/suaFormula",
+  "https://github.com/celsops/acreNews",
 ];
 
 export default repositories;

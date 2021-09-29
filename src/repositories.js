@@ -67,19 +67,22 @@ export function fork(repoName, username) {
     });
 }
 
-export function clone(forkName, username) {
+export function clone(username, repoName, isDeliveryReview) {
   console.log("Criando diretórios temporários...");
 
-  const folderName = forkName + "-" + username;
+  const folderName = repoName + "-" + username;
   const formattedFolderName = folderName.replace("_", "-");
-  shell.cd("temp");
+
+  shell.cd(`temp/${isDeliveryReview ? "delivery-review" : "code-review"}`);
   shell.mkdir(formattedFolderName);
   shell.cd(formattedFolderName);
 
-  console.log(`Iniciando clone do repositório "${forkName}"...`);
+  console.log(`Iniciando clone do repositório "${repoName}"...`);
 
   shell.exec(
-    `git clone https://github.com/${process.env.GIT_NAME}/${forkName}`
+    `git clone https://github.com/${
+      isDeliveryReview ? username : process.env.GIT_NAME
+    }/${repoName}`
   );
 }
 
@@ -101,9 +104,6 @@ export function commitAndPush(forkName) {
   shell.exec("git add .");
   shell.exec('git commit -m "Preparando revisão de código"');
   shell.exec("git push");
-
-  shell.cd("..");
-  shell.cd("..");
 }
 
 export async function createPullRequest(repoName, username) {

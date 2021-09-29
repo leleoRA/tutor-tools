@@ -1,6 +1,9 @@
 import "./setup.js";
 
 import readlineSync from "readline-sync";
+import shell from "shelljs";
+
+import repositories from "./data/links.js";
 
 import {
   getRepoInfs,
@@ -12,9 +15,14 @@ import {
   createPullRequest,
 } from "./repositories.js";
 
-import repositories from "./data/links.js";
+const root = shell.pwd().stdout;
+
 async function main() {
-  const operations = ["Revisão de Entrega", "Revisão de Código"];
+  const operations = [
+    "Revisão de Entrega",
+    "Revisão de Código",
+    "Finalizar Avaliação",
+  ];
 
   const index = readlineSync.keyInSelect(
     operations,
@@ -29,27 +37,52 @@ async function main() {
     case 2:
       await codeReview();
       break;
+
+    case 3:
+      clearTempFiles();
+      break;
   }
 }
 
 main();
 
-async function deliveryReview() {}
+async function deliveryReview() {
+  const projectRepositories = repositories;
 
-async function codeReview() {
-  const repositoriesList = repositories;
+  shell.mkdir("./temp/delivery-review");
 
   await Promise.all(
-    repositoriesList.map(async (repoURL) => {
+    projectRepositories.map((repoURL) => {
+      const { username, repoName } = getRepoInfs(repoURL);
+
+      try {
+        shell.cd(root);
+        clone(username, repoName, true);
+      } catch (err) {
+        console.log(err);
+        return false;
+      }
+    })
+  );
+}
+
+async function codeReview() {
+  const projectRepositories = repositories;
+
+  shell.mkdir("./temp/code-review");
+
+  await Promise.all(
+    projectRepositories.map(async (repoURL) => {
       const { username, repoName } = getRepoInfs(repoURL);
 
       try {
         const forkName = await fork(repoName, username);
 
-        await clone(forkName, username);
-        await deleteFiles(forkName);
-        await commitAndPush(forkName);
-        await createPullRequest(repoName, username);
+        shell.cd(root);
+        clone(username, forkName, false);
+        deleteFiles(forkName);
+        commitAndPush(forkName);
+        createPullRequest(repoName, username);
       } catch (err) {
         console.log(err);
         return false;
@@ -58,6 +91,9 @@ async function codeReview() {
       return true;
     })
   );
+}
 
+function clearTempFiles() {
+  shell.cd(`${root}/temp`);
   clear();
 }
