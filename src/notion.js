@@ -1,10 +1,26 @@
 import { Client } from "@notionhq/client"
 import './setup.js';
-import {requesiteProject, studentsInfo,projectInfo, tutorInfo} from './feature_notion/faker.js';
-import {v4 as uuid, v4 } from 'uuid'
+import { getProjetAndStudentsInfo } from './spreadsheet.js'
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN })
-
+const tutorInfo = [
+  {
+    name:"guga",
+    students:[]
+  },
+  {
+    name:"leo",
+    students:[]
+  },
+  {
+    name:"thiago",
+    students:[]
+  },
+  {
+    name:"gabriel",
+    students:[]
+  },
+]
 const databaseId = process.env.NOTION_DATABASE_ID
 
 async function main(){
@@ -15,12 +31,14 @@ async function main(){
     for (const student of tutor.students){
       const idInitialTemplate = (await initialTemplateStudent(idTutor,student,projectName)).results[0].id;
       const idRequisiteProject = await findIdRequisiteProject(idInitialTemplate);
-      await addRequisitesProject(idRequisiteProject)
+      await addRequisitesProject(idRequisiteProject);
+      const idRequisiteEvaluationProject = await findIdEvaluationRequisitesProject(idInitialTemplate);
+      await addRequisitesEvaluationProject(idRequisiteEvaluationProject,student);
+      // await 
     }
   }
 }
 async function initialTemplateStudent(blockId,student,projectName) {
-  const idAvaliation = uuid();
   try {
     const response = await notion.blocks.children.append({
       block_id: blockId,
@@ -86,18 +104,36 @@ async function initialTemplateStudent(blockId,student,projectName) {
 }
 async function addRequisitesProject(id){
   try{
-    const response = await notion.blocks.children.append({
-
+    await notion.blocks.children.append({
       block_id:id,
       children: createTemplateRequestProject()
     })
   }catch(e){
-    
-    console.log("Deu ruim na gamb",e)
+
   }
 }
+async function addRequisitesEvaluationProject(id,student){
+  try{
+    await notion.blocks.children.append({
+      block_id:id,
+      children: createTemplateRequisitesEvaluationProject(student)
+    })
+  }catch(e){}
+}
+function createTemplateRequisitesEvaluationProject(student){
+  const requestProjectFormated = student.requisitesReview.map( (requisite) =>{
+    return{
+      type:'bulleted_list_item',
+      bulleted_list_item: { 
+        text: addText(requisite.description + ': '+ requisite.evaluation)
+      }
+    }
+  })
+  return requestProjectFormated;
+  
+}
 function createTemplateRequestProject(){
-  const requestProjectFormated = requesiteProject.map((request) =>{
+  const requestProjectFormated = projectInfo.requisites.map((request) =>{
     if (request.note === undefined){
       return{
         type:'bulleted_list_item',
@@ -137,7 +173,6 @@ function createTemplateRequestProject(){
   return requestProjectFormated;
   
 }
-
 async function findIdRequisiteProject(id){
   let lastid = id;
   try {
@@ -151,30 +186,23 @@ async function findIdRequisiteProject(id){
         lastid = response.results[0].id;
       }
     }
-  } catch (error) {
-    // console.log(error)
-  }
+  } catch (error) {}
   return lastid
 }
-async function findLastId(id){
+async function findIdEvaluationRequisitesProject(id){
   let lastid = id;
   try {
     const response = await notion.blocks.children.list({block_id:id})
+    const path = [1,2]
+    let i = 0;
     while(response.results.length >= 1){
       const response = await notion.blocks.children.list({block_id:lastid})
-      if (response.results.length > 1){
-        lastid = response.results[1].id;
-      }else{
-        lastid = response.results[0].id;
-      }
+      lastid = response.results[ path[i] ].id;
+      i = i+1;
     }
-  } catch (error) {
-    // console.log(error)
-  }
-  return lastid
+  } catch (error) {}
+  return lastid;
 }
-
-
 function addText(content){
   return  [{ 
       type: "text", 
@@ -186,7 +214,6 @@ function addText(content){
 function getMessageFeedbackCode(){
   return `Feedback Qualitativo: disponível no Pull Request no GitHub (Pode fechar o Pull Request depois de ler, clicando em Close Pull Request.) "`
 }
-
 async function addToggle(blockId,content){
   try {
     const response = await notion.blocks.children.append({
@@ -203,46 +230,16 @@ async function addToggle(blockId,content){
     
   }
 }
-async function addHeading3(blockId,content){
-  try {
-    const response = await notion.blocks.children.append({
-      block_id:blockId,
-      children:[{
-        type:"heading_3",
-        heading_3:{
-          text:addText(content)
-        }
-      }]
-    })
-    return response; 
-  } catch (error) {
-    
-  }
-}
-async function addBlock(blockId,type,content){
-  try {
-    const response = await notion.blocks.children.append({
-      block_id:blockId,
-      children:[{
-        type:type,
-        [type]:{
-          text:addText(content)
-        }
-      }]
-    })
-    return response; 
-  } catch (error) {
-    
-  }
-}
 
 function formatedStudents(){
   tutorInfo.forEach((tutor)=>{
-    const studentsTheseTutor = studentsInfo.find( (student) => {return tutor.name === student.tutor} )
-    if (studentsTheseTutor !== undefined){
-      tutor.students.push(studentsTheseTutor);
-    }
+    studentsInfo.forEach( (student) => {
+      if(tutor.name.toLowerCase() === student.tutor?.toLowerCase()){
+        tutor.students.push(student)
+      }
+    })
   });
 }
+const [projectInfo,studentsInfo] = await getProjetAndStudentsInfo();
 formatedStudents()
 main()
