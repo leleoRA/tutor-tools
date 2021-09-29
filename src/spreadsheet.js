@@ -1,5 +1,5 @@
 import { GoogleSpreadsheet } from "google-spreadsheet";
-import creds from '../client_secret.js';
+import creds from '../client_secret_google.js';
 
 const spreadsheetId = '1CMrGiaLQ8c8P8HxQF0dzn8nGKN1uiy2Dj_645KX_IpY'
 const sheetTitle = 'Sing me a song';
