@@ -3,6 +3,7 @@ import "./setup.js";
 import readlineSync from "readline-sync";
 
 import {
+  getRepositories,
   getRepoInfs,
   fork,
   clone,
@@ -35,3 +36,29 @@ async function main() {
 main();
 
 async function deliveryReview() {}
+
+async function codeReview() {
+  const repositoriesList = repositories;
+
+  await Promise.all(
+    repositoriesList.map(async (repoURL) => {
+      const { username, repoName } = getRepoInfs(repoURL);
+
+      try {
+        const forkName = await fork(repoName, username);
+
+        await clone(forkName, username);
+        await deleteFiles(forkName);
+        await commitAndPush(forkName);
+        await createPullRequest(repoName, username);
+      } catch (err) {
+        console.log(err);
+        return false;
+      }
+
+      return true;
+    })
+  );
+
+  clear();
+}
