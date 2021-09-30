@@ -4,10 +4,10 @@ import credentials from "../../client_secret_google.js";
 const spreadsheetId = '1CMrGiaLQ8c8P8HxQF0dzn8nGKN1uiy2Dj_645KX_IpY'
 const sheetTitle = 'Sing me a song';
 
-const repositories = [];
 const tutor = process.env.TUTOR_NAME;
 
-export async function findLinks() {
+export async function getLinks() {
+    const links = [];
     const doc = new GoogleSpreadsheet(spreadsheetId);
     doc.useServiceAccountAuth(credentials);
 
@@ -21,12 +21,11 @@ export async function findLinks() {
         if(row !== undefined) {
             if(row._rawData[1].toLowerCase() === tutor.toLowerCase()) {
                 const link = rows[i]._rawData[2];
-                repositories.push(link);    
+                links.push(link);    
             }
         }
     }
 
-    console.log(repositories);
-    // console.log('info', info)
+    return links;
 }
  

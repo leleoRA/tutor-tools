@@ -14,7 +14,7 @@ import {
   createPullRequest,
 } from "./repositories.js";
 
-import {findLinks} from "./data/links.js";
+import {getLinks} from "./data/links.js";
 // import { addItem, createTemplate } from './notion.js'
 import NotFoundError from "./errors/NotFound.js";
 import UnauthorizedError from "./errors/Unauthorized.js";
@@ -46,9 +46,6 @@ async function main() {
       await createTemplate();
       break;
     
-    case 4: 
-      await findLinks();
-      break;
   }
 }
 
@@ -57,7 +54,8 @@ main();
 async function deliveryReview() {}
 
 async function codeReview() {
-  const repositoriesList = repositories;
+  const repositoriesList = await getLinks();
+
   if(repositoriesList.length === 0) {
     throw new NotFoundError("repositórios");
   }
@@ -82,7 +80,7 @@ async function codeReview() {
     })
   );
 
-  // clear();
+  clear();
 }
 
 async function gitHubTokenAuthenticate() {
