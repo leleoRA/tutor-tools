@@ -14,13 +14,13 @@ import {
   createPullRequest,
 } from "./repositories.js";
 
-import repositories from "./data/links.js";
-import { addItem, createTemplate } from './notion.js'
+import {findLinks} from "./data/links.js";
+// import { addItem, createTemplate } from './notion.js'
 import NotFoundError from "./errors/NotFound.js";
 import UnauthorizedError from "./errors/Unauthorized.js";
 
 async function main() {
-  const operations = ["Revisão de Entrega", "Revisão de Código", "Teste Notion"];
+  const operations = ["Revisão de Entrega", "Revisão de Código", "Teste Notion", "Teste busca links"];
 
   const index = readlineSync.keyInSelect(
     operations,
@@ -44,6 +44,10 @@ async function main() {
     
     case 3:
       await createTemplate();
+      break;
+    
+    case 4: 
+      await findLinks();
       break;
   }
 }
@@ -78,7 +82,7 @@ async function codeReview() {
     })
   );
 
-  clear();
+  // clear();
 }
 
 async function gitHubTokenAuthenticate() {
