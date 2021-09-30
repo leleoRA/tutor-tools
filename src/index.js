@@ -1,9 +1,9 @@
 import "./setup.js";
 
 import readlineSync from "readline-sync";
-import { validateGitHubToken } from "validate-github-token";
-import axios from "axios";
 import shell from "shelljs";
+
+import * as authenticateController from "./controllers/gitHubTokenAuthenticate.js";
 
 import {
   getRepoInfs,
@@ -18,7 +18,6 @@ import {
 import { getLinks } from "./data/links.js";
 import { createTemplate } from './notion.js'
 import NotFoundError from "./errors/NotFound.js";
-import UnauthorizedError from "./errors/Unauthorized.js";
 
 const root = shell.pwd().stdout;
 const projectRepositories = await getLinks();
@@ -43,7 +42,7 @@ async function main() {
 
     case 2:
       try {
-        await gitHubTokenAuthenticate();
+        await authenticateController.authenticate();
         await codeReview();
       } catch (err) {
         console.log(err);
@@ -111,46 +110,7 @@ async function codeReview() {
   );
 }
 
-async function gitHubTokenAuthenticate() {
-  const gitHubToken = process.env.GIT_TOKEN;
-  const gitHubName = process.env.GIT_NAME;
-
-  const config = {
-    headers: {
-      Authorization: `token ${gitHubToken}`,
-    },
-  };
-  try {
-    const validated = await validateGitHubToken(
-      gitHubToken,
-      {   
-        scope: {
-          included: ['repo']
-        }
-      } 
-    );
-
-    const response = await axios
-      .get(
-        `https://api.github.com/users/${gitHubName}`,
-        config
-      );
-
-    if(!("plan" in response.data)) {
-      throw new Error();
-    }
-  
-  } catch(err) {
-    if(err.response?.status === 404) {
-      throw new NotFoundError("usuário no github")
-    }
-    
-    throw new UnauthorizedError(err.message);
-  } 
-}
-
 async function clearTempFiles() {
   shell.cd(`${root}/temp`);
   clear();
 }
-
