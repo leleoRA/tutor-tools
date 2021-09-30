@@ -1,17 +1,15 @@
 {
-  "name": "clone_repo",
+  "name": "tutor-tools",
   "version": "1.0.0",
   "type": "module",
-  "description": "",
-  "main": "index.js",
+  "main": "./src/index.js",
   "scripts": {
-    "start": "node ./src/index.js",
     "dev": "nodemon ./src/index.js",
     "google": "node ./src/spreadsheet.js",
-    "notion": "node ./src/notion.js"
+    "notion": "node ./src/notion.js",
+    "start": "node ./src/index.js"
   },
-  "keywords": [],
-  "author": "",
+  "author": "Driven Education",
   "license": "ISC",
   "dependencies": {
     "@notionhq/client": "^0.3.0",
@@ -25,5 +23,7 @@
     "shelljs": "^0.8.4",
     "validate-github-token": "^1.1.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "nodemon": "^2.0.13"
+  }
 }
