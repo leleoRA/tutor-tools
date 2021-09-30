@@ -16,10 +16,7 @@ const rowsReference = {
   startRowSheet: 3,
   endRowSheet: 52,
   rowRequisit: 1,
-
 }
-
-const studentsInfo = []
 
 export async function getProjetAndStudentsInfo(){
   var doc = new GoogleSpreadsheet(spreadsheetId);
@@ -47,17 +44,11 @@ export async function getProjetAndStudentsInfo(){
 
   return [projectInfo,studentsInfo];
 }
-
 function convertRequisiteEvaluation(evaluation){
   if (evaluation === 0) return "Requisitos entregues totalmente";
   else if (evaluation === 1) return "Requisitos entregues parcialmente"
   return "Requisitos não entregues"
 }
-
-function extractIdByUrl(url) {
-  const id = (url.split("/"))[5]
-}
-
 function getRequisitesProject(sheet) {
   const requisitesProject = []
 
@@ -71,7 +62,6 @@ function getRequisitesProject(sheet) {
 
   return requisitesProject;
 }
-
 function getStudentsResults(sheet) {
   const studentsInfo = [];
   for(let row = rowsReference.startRowSheet; row < rowsReference.endRowSheet; row ++){
@@ -97,6 +87,19 @@ function getRequisitesEvaluationByRow(sheet,row){
       evaluation:convertRequisiteEvaluation(evaluation)
     })
   }
-
   return requisiteEvaluation;
+}
+
+function extractIdByUrl(url) {
+  const id = (url.split("/"))[5]
+}
+function getTutors(sheet){
+  const tutors = []
+  for (let row = rowsReference.startRowSheet; row <rowsReference.endRowSheet; row++) {
+    const tutor = (sheet.getCell(row,columnsReference.tutorColumn).value).toLowerCase();
+    if (!tutors.includes(tutor)){
+      tutors.push(tutor)
+    }
+  }
+  return tutors;
 }
