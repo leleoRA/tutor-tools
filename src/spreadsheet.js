@@ -4,17 +4,19 @@ import creds from '../client_secret_google.js';
 const spreadsheetId = '1CMrGiaLQ8c8P8HxQF0dzn8nGKN1uiy2Dj_645KX_IpY'
 const sheetTitle = 'Sing me a song';
 
-const initialColumnRequisit = 4;
-const endColumnRequisit = 10;
-const rowRequisit = 1;
-
-const endRowSheet = 52
-
-const nameColumn = 0
-const tutorColumn = 1
-const expectationColumn = 11
-
-const studentsInfo = []
+const columnsReference = {
+  endColumn:20,
+  initialColumnRequisit:4,
+  endColumnRequisit:10,
+  nameColumn: 0,
+  tutorColumn: 1,
+  expectationColumn: 11
+}
+const rowsReference = {
+  startRowSheet: 3,
+  endRowSheet: 52,
+  rowRequisit: 1,
+}
 
 export async function getProjetAndStudentsInfo(){
   var doc = new GoogleSpreadsheet(spreadsheetId);
@@ -25,54 +27,79 @@ export async function getProjetAndStudentsInfo(){
 
   const sheet = doc.sheetsByTitle[sheetTitle]; 
   
-  await sheet.loadCells({startColumnIndex:nameColumn, endColumnIndex:20});
+  await sheet.loadCells({
+    startColumnIndex:0, 
+    endColumnIndex:columnsReference.endColumn,
+    startRowIndex:0,
+    endRowIndex:rowsReference.endRowSheet
+  });
 
-  // ====================================================================================
+  const requisitesProject =  getRequisitesProject(sheet);
+
+  const projectInfo = {
+    title: sheetTitle,
+    requisites: requisitesProject
+  }
+  const studentsInfo =  getStudentsResults(sheet);
+
+  return [projectInfo,studentsInfo];
+}
+function convertRequisiteEvaluation(evaluation){
+  if (evaluation === 0) return "Requisitos entregues totalmente";
+  else if (evaluation === 1) return "Requisitos entregues parcialmente"
+  return "Requisitos não entregues"
+}
+function getRequisitesProject(sheet) {
   const requisitesProject = []
 
-  for (let i = initialColumnRequisit; i < endColumnRequisit; i++) {
-    const requisit = sheet.getCell(rowRequisit,i);
+  for (let col = columnsReference.initialColumnRequisit; col < columnsReference.endColumnRequisit; col=col+1) {
+    const requisit = sheet.getCell(rowsReference.rowRequisit,col);
     requisitesProject.push({
       "description":requisit.value,
       "note":requisit.note
     });
   }
 
-  const projectInfo = {
-    title: sheetTitle,
-    requisites: requisitesProject
-  }
-  // ====================================================================================
-
-  for(let row = 3; row < endRowSheet; row ++){
-    const tutor = sheet.getCell(row, tutorColumn).value
-    const requisiteEvaluation = []
-    for (let col = initialColumnRequisit; col < endColumnRequisit; col++) {
-      const requisite   = sheet.getCell(rowRequisit,col).value;
-      const evaluation = sheet.getCell(row,col).value;
-      requisiteEvaluation.push({
-        description:requisite,
-        evaluation:convertRequisiteEvaluation(evaluation)
-      })
-    }
+  return requisitesProject;
+}
+function getStudentsResults(sheet) {
+  const studentsInfo = [];
+  for(let row = rowsReference.startRowSheet; row < rowsReference.endRowSheet; row ++){
     const student = {
-      name: sheet.getCell(row, nameColumn).value,
-      tutor: tutor,
+      name: sheet.getCell(row, columnsReference.nameColumn).value,
+      tutor: sheet.getCell(row, columnsReference.tutorColumn).value,
       deliveryReview: {
-        evaluation: sheet.getCell(row, expectationColumn).value,
+        evaluation: sheet.getCell(row, columnsReference.expectationColumn).value,
       },
-      requisitesReview: requisiteEvaluation
+      requisitesReview: getRequisitesEvaluationByRow(sheet,row)
     }
-    
     studentsInfo.push(student);
-
   }
-  // console.log("Dados selecionado! ")
-  return [projectInfo,studentsInfo];
+  return studentsInfo
+}
+function getRequisitesEvaluationByRow(sheet,row){
+  const requisiteEvaluation = [];
+  for (let col = columnsReference.initialColumnRequisit; col < columnsReference.endColumnRequisit; col++) {
+    const requisite   = sheet.getCell(rowsReference.rowRequisit,col).value;
+    const evaluation = sheet.getCell(row,col).value;
+    requisiteEvaluation.push({
+      description:requisite,
+      evaluation:convertRequisiteEvaluation(evaluation)
+    })
+  }
+  return requisiteEvaluation;
 }
 
-function convertRequisiteEvaluation(evaluation){
-  if (evaluation === 0) return "Requisitos entregues totalmente";
-  else if (evaluation === 1) return "Requisitos entregues parcialmente"
-  return "Requisitos não entregues"
+function extractIdByUrl(url) {
+  const id = (url.split("/"))[5]
+}
+function getTutors(sheet){
+  const tutors = []
+  for (let row = rowsReference.startRowSheet; row <rowsReference.endRowSheet; row++) {
+    const tutor = (sheet.getCell(row,columnsReference.tutorColumn).value).toLowerCase();
+    if (!tutors.includes(tutor)){
+      tutors.push(tutor)
+    }
+  }
+  return tutors;
 }

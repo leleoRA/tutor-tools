@@ -1,8 +1,9 @@
 import "./setup.js";
 
 import readlineSync from "readline-sync";
-import { validateGitHubToken, ValidationError } from "validate-github-token";
+import { validateGitHubToken } from "validate-github-token";
 import axios from "axios";
+import shell from "shelljs";
 
 import {
   getRepoInfs,
@@ -12,15 +13,23 @@ import {
   commitAndPush,
   clear,
   createPullRequest,
-} from "./repositories.js";
+} from "./services/repositories.js";
 
-import {getLinks} from "./data/links.js";
-// import { addItem, createTemplate } from './notion.js'
+import { getLinks } from "./data/links.js";
+import { createTemplate } from './notion.js'
 import NotFoundError from "./errors/NotFound.js";
 import UnauthorizedError from "./errors/Unauthorized.js";
 
+const root = shell.pwd().stdout;
+const projectRepositories = await getLinks();
+
 async function main() {
-  const operations = ["Revisão de Entrega", "Revisão de Código", "Teste Notion", "Teste busca links"];
+  const operations = [
+    "Feedback de Entrega",
+    "Feedback de Código",
+    "Finalizar Avaliação",
+    "Criar template Notion"
+  ];
 
   const index = readlineSync.keyInSelect(
     operations,
@@ -39,48 +48,68 @@ async function main() {
       } catch (err) {
         console.log(err);
       }
-      
+      break;
+
+    case 3:
+      clearTempFiles();
       break;
     
-    case 3:
+    case 4:
       await createTemplate();
       break;
-    
   }
 }
 
 main();
 
-async function deliveryReview() {}
-
-async function codeReview() {
-  const repositoriesList = await getLinks();
-
-  if(repositoriesList.length === 0) {
+async function deliveryReview() {
+  if (projectRepositories.length === 0) {
     throw new NotFoundError("repositórios");
   }
 
+  console.log(projectRepositories);
+  shell.mkdir("./temp/delivery-review");
+
   await Promise.all(
-    repositoriesList.map(async (repoURL) => {
+    projectRepositories.map((repoURL) => {
+      const { username, repoName } = getRepoInfs(repoURL);
+
+      try {
+        shell.cd(root);
+        clone(username, repoName, true);
+      } catch (err) {
+        console.log(err);
+        return false;
+      }
+    })
+  );
+}
+
+async function codeReview() {
+
+  if(projectRepositories.length === 0) {
+    throw new NotFoundError("repositórios");
+  }
+
+  shell.mkdir("./temp/code-review");
+
+  await Promise.all(
+    projectRepositories.forEach(async (repoURL) => {
       const { username, repoName } = getRepoInfs(repoURL);
 
       try {
         const forkName = await fork(repoName, username);
 
-        await clone(forkName, username);
-        await deleteFiles(forkName);
-        await commitAndPush(forkName, username);
-        await createPullRequest(repoName, username);
+        shell.cd(root);
+        clone(username, forkName, false);
+        deleteFiles(forkName);
+        commitAndPush(forkName);
+        createPullRequest(repoName, username);
       } catch (err) {
         console.log(err);
-        return false;
       }
-
-      return true;
     })
   );
-
-  clear();
 }
 
 async function gitHubTokenAuthenticate() {
@@ -120,3 +149,9 @@ async function gitHubTokenAuthenticate() {
     throw new UnauthorizedError(err.message);
   } 
 }
+
+async function clearTempFiles() {
+  shell.cd(`${root}/temp`);
+  clear();
+}
+
