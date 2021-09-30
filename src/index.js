@@ -18,6 +18,8 @@ import {
 
 import repositories from "./data/links.js";
 
+import { addItem, createTemplate } from './notion.js'
+
 import NotFoundError from "./errors/NotFound.js";
 import UnauthorizedError from "./errors/Unauthorized.js";
 
@@ -51,6 +53,10 @@ async function main() {
 
     case 3:
       clearTempFiles();
+      break;
+    
+    case 3:
+      await createTemplate();
       break;
   }
 }
