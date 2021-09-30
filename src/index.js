@@ -67,7 +67,6 @@ async function deliveryReview() {
     throw new NotFoundError("repositórios");
   }
 
-  console.log(projectRepositories);
   shell.mkdir("./temp/delivery-review");
 
   await Promise.all(
