@@ -1,9 +1,10 @@
 import "./setup.js";
 
 import readlineSync from "readline-sync";
+import { validateGitHubToken, ValidationError } from "validate-github-token";
+import axios from "axios";
 
 import {
-  getRepositories,
   getRepoInfs,
   fork,
   clone,
@@ -15,6 +16,8 @@ import {
 
 import repositories from "./data/links.js";
 import { addItem, createTemplate } from './notion.js'
+import NotFoundError from "./errors/NotFound.js";
+import UnauthorizedError from "./errors/Unauthorized.js";
 
 async function main() {
   const operations = ["Revisão de Entrega", "Revisão de Código", "Teste Notion"];
@@ -30,7 +33,13 @@ async function main() {
       break;
 
     case 2:
-      await codeReview();
+      try {
+        await gitHubTokenAuthenticate();
+        await codeReview();
+      } catch (err) {
+        console.log(err);
+      }
+      
       break;
     
     case 3:
@@ -45,8 +54,11 @@ async function deliveryReview() {}
 
 async function codeReview() {
   const repositoriesList = repositories;
+  if(repositoriesList.length === 0) {
+    throw new NotFoundError("repositórios");
+  }
 
-  const success = await Promise.all(
+  await Promise.all(
     repositoriesList.map(async (repoURL) => {
       const { username, repoName } = getRepoInfs(repoURL);
 
@@ -55,7 +67,7 @@ async function codeReview() {
 
         await clone(forkName, username);
         await deleteFiles(forkName);
-        await commitAndPush(forkName);
+        await commitAndPush(forkName, username);
         await createPullRequest(repoName, username);
       } catch (err) {
         console.log(err);
@@ -66,5 +78,43 @@ async function codeReview() {
     })
   );
 
-  if (success) await clear();
+  clear();
+}
+
+async function gitHubTokenAuthenticate() {
+  const gitHubToken = process.env.GIT_TOKEN;
+  const gitHubName = process.env.GIT_NAME;
+
+  const config = {
+    headers: {
+      Authorization: `token ${gitHubToken}`,
+    },
+  };
+  try {
+    const validated = await validateGitHubToken(
+      gitHubToken,
+      {   
+        scope: {
+          included: ['repo']
+        }
+      } 
+    );
+
+    const response = await axios
+      .get(
+        `https://api.github.com/users/${gitHubName}`,
+        config
+      );
+
+    if(!("plan" in response.data)) {
+      throw new Error();
+    }
+  
+  } catch(err) {
+    if(err.response?.status === 404) {
+      throw new NotFoundError("usuário no github")
+    }
+    
+    throw new UnauthorizedError(err.message);
+  } 
 }
