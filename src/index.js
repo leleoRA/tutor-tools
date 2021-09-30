@@ -14,22 +14,21 @@ import {
   deleteFiles,
   fork,
   getRepoInfs,
-} from "./repositories.js";
+} from "./services/repositories.js";
 
-import repositories from "./data/links.js";
-
-import { addItem, createTemplate } from './notion.js'
+import repositoryLinks from "./data/repositoryLinks.js";
 
 import NotFoundError from "./errors/NotFound.js";
 import UnauthorizedError from "./errors/Unauthorized.js";
 
 const root = shell.pwd().stdout;
+const projectRepositories = repositoryLinks;
 
 async function main() {
   const operations = [
     "Feedback de Entrega",
     "Feedback de Código",
-    "Finalizar Avaliação",
+    "Remover Diretórios Temporários",
   ];
 
   const index = readlineSync.keyInSelect(
@@ -52,11 +51,7 @@ async function main() {
       break;
 
     case 3:
-      clearTempFiles();
-      break;
-    
-    case 3:
-      await createTemplate();
+      await clearTempFiles();
       break;
   }
 }
@@ -64,8 +59,6 @@ async function main() {
 main();
 
 async function deliveryReview() {
-  const projectRepositories = repositories;
-
   if (projectRepositories.length === 0) {
     throw new NotFoundError("repositórios");
   }
@@ -88,8 +81,6 @@ async function deliveryReview() {
 }
 
 async function codeReview() {
-  const projectRepositories = repositories;
-
   if (projectRepositories.length === 0) {
     throw new NotFoundError("repositórios");
   }
@@ -118,7 +109,7 @@ async function codeReview() {
   );
 }
 
-function clearTempFiles() {
+async function clearTempFiles() {
   shell.cd(`${root}/temp`);
   clear();
 }

@@ -2,10 +2,10 @@ import axios from "axios";
 import shell from "shelljs";
 import osName from "os-name";
 
-import CanNotFork from "./errors/CanNotFork.js";
-import CanNotClone from "./errors/CanNotClone.js";
-import CanNotCommitAndPush from "./errors/CanNotCommitAndPush.js";
-import CanNotPullRequest from "./errors/CanNotPullRequest.js";
+import CanNotFork from "../errors/CanNotFork.js";
+import CanNotClone from "../errors/CanNotClone.js";
+import CanNotCommitAndPush from "../errors/CanNotCommitAndPush.js";
+import CanNotPullRequest from "../errors/CanNotPullRequest.js";
 
 export function getRepoInfs(repoURL) {
   const urlInfs = repoURL.split("/");
