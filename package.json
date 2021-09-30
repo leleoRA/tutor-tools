@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node ./src/index.js",
     "dev": "nodemon ./src/index.js",
-    "google": "node ./src/feature_notion/spreadsheet.js",
+    "google": "node ./src/spreadsheet.js",
     "notion": "node ./src/notion.js"
   },
   "keywords": [],
