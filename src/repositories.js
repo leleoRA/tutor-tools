@@ -1,6 +1,7 @@
-import fs from "fs";
 import axios from "axios";
 import shell from "shelljs";
+import osName from "os-name";
+
 import CanNotFork from "./errors/CanNotFork.js";
 import CanNotClone from "./errors/CanNotClone.js";
 import CanNotCommitAndPush from "./errors/CanNotCommitAndPush.js";
@@ -44,27 +45,32 @@ export function fork(repoName, username) {
   return forkName;
 }
 
-export function clone(forkName, username) {
-  console.log("Criando diretórios temporários...");
+export function clone(username, repoName, isDeliveryReview) {
+  console.log(
+    `Criando diretório temporário para o repositório "${repoName}"...`
+  );
 
-  const folderName = forkName + "-" + username;
-  const formattedFolderName= folderName.replace("_","-");
-  shell.cd("temp");
+  const folderName = repoName + "-" + username;
+  const formattedFolderName = folderName.replace("_", "-");
+
+  shell.cd(`temp/${isDeliveryReview ? "delivery-review" : "code-review"}`);
   shell.mkdir(formattedFolderName);
   shell.cd(formattedFolderName);
 
-  console.log(`Iniciando clone do repositório "${forkName}"...`);
+  console.log(`Iniciando clone do repositório "${repoName}"...`);
 
   shell.exec(
-    `git clone https://github.com/${process.env.GIT_NAME}/${forkName}`
-  );  
+    `git clone https://github.com/${
+      isDeliveryReview ? username : process.env.GIT_NAME
+    }/${repoName}`,
+    { silent: true }
+  );
 
   const directoryName = shell.ls()[0];
 
-  if(directoryName !== forkName) {
-    throw new CanNotClone(forkName, username);
+  if (directoryName !== repoName) {
+    throw new CanNotClone(repoName, username);
   }
-  
 }
 
 export function deleteFiles(forkName) {
@@ -85,15 +91,14 @@ export function commitAndPush(forkName, username) {
   shell.exec("git add .");
   const commitResponse = shell.exec(
     'git commit -m "Preparando revisão de código"',
-    { silent : true }
+    { silent: true }
   );
+
   const pushResponse = shell.exec("git push");
 
-  shell.cd("..");
-  shell.cd("..");
   const failCommit = commitResponse.code !== 0;
   const failPush = pushResponse.code !== 0;
-  if(failCommit || failPush) {
+  if (failCommit || failPush) {
     throw new CanNotCommitAndPush(forkName, username);
   }
 }
@@ -115,13 +120,15 @@ export async function createPullRequest(repoName, username) {
     },
   };
 
-  return axios.post(
-    `https://api.github.com/repos/${username}/${repoName}/pulls`,
-    body,
-    config
-  ).catch(({ response }) => {
-    throw new CanNotPullRequest(repoName, username, response.status);
-  });
+  return axios
+    .post(
+      `https://api.github.com/repos/${username}/${repoName}/pulls`,
+      body,
+      config
+    )
+    .catch(({ response }) => {
+      throw new CanNotPullRequest(repoName, username, response.status);
+    });
 }
 
 export function clear() {
@@ -137,8 +144,8 @@ export function clear() {
   }
 }
 
-export async function getRepoMainBranch(username, repoName) {
-  console.log(`Buscando pela branch principal em ${repoName}...`);
+async function getRepoMainBranch(username, repoName) {
+  console.log(`Buscando pela branch principal em "${repoName}"...`);
 
   return request().then(({ data }) => {
     for (let branch of data) {
@@ -160,11 +167,4 @@ export async function getRepoMainBranch(username, repoName) {
       config
     );
   }
-}
-
-//utilizada em versão antiga
-export function getRepositories() {
-  const fileData = fs.readFileSync("src/data/repositories.txt", "utf-8");
-  const repositoriesList = fileData.split("\n");
-  return repositoriesList.slice(0, repositoriesList.length);
 }
