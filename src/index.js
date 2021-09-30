@@ -28,7 +28,8 @@ async function main() {
   const operations = [
     "Feedback de Entrega",
     "Feedback de Código",
-    "Remover Diretórios Temporários",
+    "Finalizar Avaliação",
+    "Criar template Notion"
   ];
 
   const index = readlineSync.keyInSelect(
@@ -51,7 +52,11 @@ async function main() {
       break;
 
     case 3:
-      await clearTempFiles();
+      clearTempFiles();
+      break;
+    
+    case 4:
+      await createTemplate();
       break;
   }
 }
