@@ -1,7 +1,7 @@
 import "./setup.js";
 
 import readlineSync from "readline-sync";
-import { validateGitHubToken, ValidationError } from "validate-github-token";
+import { validateGitHubToken } from "validate-github-token";
 import axios from "axios";
 
 import {
@@ -15,7 +15,7 @@ import {
 } from "./repositories.js";
 
 import repositories from "./data/links.js";
-import { addItem, createTemplate } from './notion.js'
+import { createTemplate } from './notion.js'
 import NotFoundError from "./errors/NotFound.js";
 import UnauthorizedError from "./errors/Unauthorized.js";
 
