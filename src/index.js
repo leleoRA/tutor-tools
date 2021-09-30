@@ -1,31 +1,32 @@
 import "./setup.js";
 
+import axios from "axios";
 import readlineSync from "readline-sync";
 import shell from "shelljs";
 
-import repositories from "./data/links.js";
-import { validateGitHubToken, ValidationError } from "validate-github-token";
-import axios from "axios";
+import { validateGitHubToken } from "validate-github-token";
 
 import {
-  getRepoInfs,
-  fork,
-  clone,
-  deleteFiles,
-  commitAndPush,
   clear,
+  clone,
+  commitAndPush,
   createPullRequest,
+  deleteFiles,
+  fork,
+  getRepoInfs,
 } from "./repositories.js";
 
-const root = shell.pwd().stdout;
 import repositories from "./data/links.js";
+
 import NotFoundError from "./errors/NotFound.js";
 import UnauthorizedError from "./errors/Unauthorized.js";
 
+const root = shell.pwd().stdout;
+
 async function main() {
   const operations = [
-    "Revisão de Entrega",
-    "Revisão de Código",
+    "Feedback de Entrega",
+    "Feedback de Código",
     "Finalizar Avaliação",
   ];
 
@@ -46,7 +47,6 @@ async function main() {
       } catch (err) {
         console.log(err);
       }
-
       break;
 
     case 3:
@@ -59,6 +59,10 @@ main();
 
 async function deliveryReview() {
   const projectRepositories = repositories;
+
+  if (projectRepositories.length === 0) {
+    throw new NotFoundError("repositórios");
+  }
 
   shell.mkdir("./temp/delivery-review");
 
@@ -80,11 +84,11 @@ async function deliveryReview() {
 async function codeReview() {
   const projectRepositories = repositories;
 
-  shell.mkdir("./temp/code-review");
-
   if (projectRepositories.length === 0) {
     throw new NotFoundError("repositórios");
   }
+
+  shell.mkdir("./temp/code-review");
 
   await Promise.all(
     projectRepositories.map(async (repoURL) => {

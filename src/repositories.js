@@ -1,6 +1,7 @@
-import fs from "fs";
 import axios from "axios";
 import shell from "shelljs";
+import osName from "os-name";
+
 import CanNotFork from "./errors/CanNotFork.js";
 import CanNotClone from "./errors/CanNotClone.js";
 import CanNotCommitAndPush from "./errors/CanNotCommitAndPush.js";
@@ -45,7 +46,9 @@ export function fork(repoName, username) {
 }
 
 export function clone(username, repoName, isDeliveryReview) {
-  console.log("Criando diretórios temporários...");
+  console.log(
+    `Criando diretório temporário para o repositório "${repoName}"...`
+  );
 
   const folderName = repoName + "-" + username;
   const formattedFolderName = folderName.replace("_", "-");
@@ -59,13 +62,14 @@ export function clone(username, repoName, isDeliveryReview) {
   shell.exec(
     `git clone https://github.com/${
       isDeliveryReview ? username : process.env.GIT_NAME
-    }/${repoName}`
+    }/${repoName}`,
+    { silent: true }
   );
 
   const directoryName = shell.ls()[0];
 
-  if (directoryName !== forkName) {
-    throw new CanNotClone(forkName, username);
+  if (directoryName !== repoName) {
+    throw new CanNotClone(repoName, username);
   }
 }
 
@@ -140,7 +144,7 @@ export function clear() {
   }
 }
 
-export async function getRepoMainBranch(username, repoName) {
+async function getRepoMainBranch(username, repoName) {
   console.log(`Buscando pela branch principal em ${repoName}...`);
 
   return request().then(({ data }) => {
@@ -163,11 +167,4 @@ export async function getRepoMainBranch(username, repoName) {
       config
     );
   }
-}
-
-//utilizada em versão antiga
-export function getRepositories() {
-  const fileData = fs.readFileSync("src/data/repositories.txt", "utf-8");
-  const repositoriesList = fileData.split("\n");
-  return repositoriesList.slice(0, repositoriesList.length);
 }
