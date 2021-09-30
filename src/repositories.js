@@ -145,7 +145,7 @@ export function clear() {
 }
 
 async function getRepoMainBranch(username, repoName) {
-  console.log(`Buscando pela branch principal em ${repoName}...`);
+  console.log(`Buscando pela branch principal em "${repoName}"...`);
 
   return request().then(({ data }) => {
     for (let branch of data) {
