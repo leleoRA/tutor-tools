@@ -1,26 +1,37 @@
 import "./setup.js";
 
-import readlineSync from "readline-sync";
-import { validateGitHubToken } from "validate-github-token";
 import axios from "axios";
+import readlineSync from "readline-sync";
+import shell from "shelljs";
+
+import { validateGitHubToken } from "validate-github-token";
 
 import {
-  getRepoInfs,
-  fork,
-  clone,
-  deleteFiles,
-  commitAndPush,
   clear,
+  clone,
+  commitAndPush,
   createPullRequest,
+  deleteFiles,
+  fork,
+  getRepoInfs,
 } from "./repositories.js";
 
 import repositories from "./data/links.js";
+
 import { createTemplate } from './notion.js'
+
 import NotFoundError from "./errors/NotFound.js";
 import UnauthorizedError from "./errors/Unauthorized.js";
 
+const root = shell.pwd().stdout;
+
 async function main() {
-  const operations = ["Revisão de Entrega", "Revisão de Código", "Teste Notion"];
+  const operations = [
+    "Feedback de Entrega",
+    "Feedback de Código",
+    "Finalizar Avaliação",
+    "Criar template Notion"
+  ];
 
   const index = readlineSync.keyInSelect(
     operations,
@@ -39,10 +50,13 @@ async function main() {
       } catch (err) {
         console.log(err);
       }
-      
+      break;
+
+    case 3:
+      clearTempFiles();
       break;
     
-    case 3:
+    case 4:
       await createTemplate();
       break;
   }
@@ -50,25 +64,51 @@ async function main() {
 
 main();
 
-async function deliveryReview() {}
+async function deliveryReview() {
+  const projectRepositories = repositories;
 
-async function codeReview() {
-  const repositoriesList = repositories;
-  if(repositoriesList.length === 0) {
+  if (projectRepositories.length === 0) {
     throw new NotFoundError("repositórios");
   }
 
+  shell.mkdir("./temp/delivery-review");
+
   await Promise.all(
-    repositoriesList.map(async (repoURL) => {
+    projectRepositories.map((repoURL) => {
+      const { username, repoName } = getRepoInfs(repoURL);
+
+      try {
+        shell.cd(root);
+        clone(username, repoName, true);
+      } catch (err) {
+        console.log(err);
+        return false;
+      }
+    })
+  );
+}
+
+async function codeReview() {
+  const projectRepositories = repositories;
+
+  if (projectRepositories.length === 0) {
+    throw new NotFoundError("repositórios");
+  }
+
+  shell.mkdir("./temp/code-review");
+
+  await Promise.all(
+    projectRepositories.map(async (repoURL) => {
       const { username, repoName } = getRepoInfs(repoURL);
 
       try {
         const forkName = await fork(repoName, username);
 
-        await clone(forkName, username);
-        await deleteFiles(forkName);
-        await commitAndPush(forkName, username);
-        await createPullRequest(repoName, username);
+        shell.cd(root);
+        clone(username, forkName, false);
+        deleteFiles(forkName);
+        commitAndPush(forkName);
+        createPullRequest(repoName, username);
       } catch (err) {
         console.log(err);
         return false;
@@ -77,7 +117,10 @@ async function codeReview() {
       return true;
     })
   );
+}
 
+function clearTempFiles() {
+  shell.cd(`${root}/temp`);
   clear();
 }
 
@@ -91,30 +134,25 @@ async function gitHubTokenAuthenticate() {
     },
   };
   try {
-    const validated = await validateGitHubToken(
-      gitHubToken,
-      {   
-        scope: {
-          included: ['repo']
-        }
-      } 
+    const validated = await validateGitHubToken(gitHubToken, {
+      scope: {
+        included: ["repo"],
+      },
+    });
+
+    const response = await axios.get(
+      `https://api.github.com/users/${gitHubName}`,
+      config
     );
 
-    const response = await axios
-      .get(
-        `https://api.github.com/users/${gitHubName}`,
-        config
-      );
-
-    if(!("plan" in response.data)) {
+    if (!("plan" in response.data)) {
       throw new Error();
     }
-  
-  } catch(err) {
-    if(err.response?.status === 404) {
-      throw new NotFoundError("usuário no github")
+  } catch (err) {
+    if (err.response?.status === 404) {
+      throw new NotFoundError("usuário no github");
     }
-    
+
     throw new UnauthorizedError(err.message);
-  } 
+  }
 }
