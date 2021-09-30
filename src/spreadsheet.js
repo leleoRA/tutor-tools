@@ -37,13 +37,13 @@ export async function getProjetAndStudentsInfo(){
     endRowIndex:rowsReference.endRowSheet
   });
 
-  const requisitesProject = await getRequisitesProject(sheet);
+  const requisitesProject =  getRequisitesProject(sheet);
 
   const projectInfo = {
     title: sheetTitle,
     requisites: requisitesProject
   }
-  const studentsInfo = await getStudentsResults(sheet);
+  const studentsInfo =  getStudentsResults(sheet);
 
   return [projectInfo,studentsInfo];
 }
@@ -58,7 +58,7 @@ function extractIdByUrl(url) {
   const id = (url.split("/"))[5]
 }
 
-async function getRequisitesProject(sheet) {
+function getRequisitesProject(sheet) {
   const requisitesProject = []
 
   for (let col = columnsReference.initialColumnRequisit; col < columnsReference.endColumnRequisit; col=col+1) {
@@ -72,7 +72,7 @@ async function getRequisitesProject(sheet) {
   return requisitesProject;
 }
 
-async function getStudentsResults(sheet) {
+function getStudentsResults(sheet) {
   const studentsInfo = [];
   for(let row = rowsReference.startRowSheet; row < rowsReference.endRowSheet; row ++){
     const student = {
@@ -81,13 +81,13 @@ async function getStudentsResults(sheet) {
       deliveryReview: {
         evaluation: sheet.getCell(row, columnsReference.expectationColumn).value,
       },
-      requisitesReview: await getRequisitesEvaluationByRow(sheet,row)
+      requisitesReview: getRequisitesEvaluationByRow(sheet,row)
     }
     studentsInfo.push(student);
   }
   return studentsInfo
 }
-async function getRequisitesEvaluationByRow(sheet,row){
+function getRequisitesEvaluationByRow(sheet,row){
   const requisiteEvaluation = [];
   for (let col = columnsReference.initialColumnRequisit; col < columnsReference.endColumnRequisit; col++) {
     const requisite   = sheet.getCell(rowsReference.rowRequisit,col).value;
