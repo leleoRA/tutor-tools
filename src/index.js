@@ -15,11 +15,12 @@ import {
 } from "./repositories.js";
 
 import repositories from "./data/links.js";
+import { addItem, createTemplate } from './notion.js'
 import NotFoundError from "./errors/NotFound.js";
 import UnauthorizedError from "./errors/Unauthorized.js";
 
 async function main() {
-  const operations = ["Revisão de Entrega", "Revisão de Código"];
+  const operations = ["Revisão de Entrega", "Revisão de Código", "Teste Notion"];
 
   const index = readlineSync.keyInSelect(
     operations,
@@ -39,6 +40,10 @@ async function main() {
         console.log(err);
       }
       
+      break;
+    
+    case 3:
+      await createTemplate();
       break;
   }
 }

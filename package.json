@@ -6,20 +6,24 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./src/index.js",
-    "dev": "nodemon ./src/index.js"
+    "dev": "nodemon ./src/index.js",
+    "google": "node ./src/feature_notion/spreadsheet.js",
+    "notion": "node ./src/notion.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@notionhq/client": "^0.3.0",
     "axios": "^0.21.1",
     "dotenv": "^10.0.0",
+    "fs": "^0.0.1-security",
+    "google-spreadsheet": "^3.1.15",
+    "googleapis": "39",
     "os-name": "^5.0.0",
     "readline-sync": "^1.4.10",
     "shelljs": "^0.8.4",
     "validate-github-token": "^1.1.1"
   },
-  "devDependencies": {
-    "nodemon": "^2.0.12"
-  }
+  "devDependencies": {}
 }
