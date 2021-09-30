@@ -100,4 +100,3 @@ function getRequisitesEvaluationByRow(sheet,row){
 
   return requisiteEvaluation;
 }
-getProjetAndStudentsInfo()
