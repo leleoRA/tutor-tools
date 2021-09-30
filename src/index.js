@@ -4,6 +4,8 @@ import readlineSync from "readline-sync";
 import shell from "shelljs";
 
 import repositories from "./data/links.js";
+import { validateGitHubToken, ValidationError } from "validate-github-token";
+import axios from "axios";
 
 import {
   getRepoInfs,
@@ -16,6 +18,9 @@ import {
 } from "./repositories.js";
 
 const root = shell.pwd().stdout;
+import repositories from "./data/links.js";
+import NotFoundError from "./errors/NotFound.js";
+import UnauthorizedError from "./errors/Unauthorized.js";
 
 async function main() {
   const operations = [
@@ -35,7 +40,13 @@ async function main() {
       break;
 
     case 2:
-      await codeReview();
+      try {
+        await gitHubTokenAuthenticate();
+        await codeReview();
+      } catch (err) {
+        console.log(err);
+      }
+
       break;
 
     case 3:
@@ -71,6 +82,10 @@ async function codeReview() {
 
   shell.mkdir("./temp/code-review");
 
+  if (projectRepositories.length === 0) {
+    throw new NotFoundError("repositórios");
+  }
+
   await Promise.all(
     projectRepositories.map(async (repoURL) => {
       const { username, repoName } = getRepoInfs(repoURL);
@@ -96,4 +111,37 @@ async function codeReview() {
 function clearTempFiles() {
   shell.cd(`${root}/temp`);
   clear();
+}
+
+async function gitHubTokenAuthenticate() {
+  const gitHubToken = process.env.GIT_TOKEN;
+  const gitHubName = process.env.GIT_NAME;
+
+  const config = {
+    headers: {
+      Authorization: `token ${gitHubToken}`,
+    },
+  };
+  try {
+    const validated = await validateGitHubToken(gitHubToken, {
+      scope: {
+        included: ["repo"],
+      },
+    });
+
+    const response = await axios.get(
+      `https://api.github.com/users/${gitHubName}`,
+      config
+    );
+
+    if (!("plan" in response.data)) {
+      throw new Error();
+    }
+  } catch (err) {
+    if (err.response?.status === 404) {
+      throw new NotFoundError("usuário no github");
+    }
+
+    throw new UnauthorizedError(err.message);
+  }
 }
