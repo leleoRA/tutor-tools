@@ -11,7 +11,9 @@ import * as deliveryReviewController from "./controllers/deliveryReview.js";
 import * as hooks from "./utils/hooks/index.js";
 
 global.root = shell.pwd().stdout;
-
+const spreadsheetId = "1CMrGiaLQ8c8P8HxQF0dzn8nGKN1uiy2Dj_645KX_IpY";
+const sheetTitle = "Sing me a song";
+const nSemana = "17"
 async function main() {
   const operations = [
     "Revisão de Entrega",
@@ -40,7 +42,7 @@ async function main() {
       break;
 
     case 3:
-      await communicationController.prepareCommunication();
+      await communicationController.prepareCommunication(spreadsheetId,sheetTitle,nSemana);
       break;
 
     case 4:
