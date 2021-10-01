@@ -15,7 +15,7 @@ const rowsReference = {
   rowRequisit: 1,
 };
 
-export async function getProjetAndStudentsInfo(spreadsheetId,sheetTitle) {
+export async function getProjetAndStudentsInfo(spreadsheetId, sheetTitle) {
   var doc = new GoogleSpreadsheet(spreadsheetId);
 
   doc.useServiceAccountAuth(creds);

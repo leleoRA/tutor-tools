@@ -1,12 +1,18 @@
 import { Client } from "@notionhq/client";
-import { addText, getMessageFeedbackCode, createTemplateRequestProject, createTemplateRequisitesEvaluationProject } from "../../utils/notion/index.js";
+import {
+  addText,
+  getMessageFeedbackCode,
+  createTemplateRequestProject,
+  createTemplateRequisitesEvaluationProject,
+} from "../../utils/notion/index.js";
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
 const databaseId = process.env.NOTION_DATABASE_ID;
 
-export async function createTemplate(tutorInfo,projectInfo,nSemana='1') {
+export async function createTemplate(tutorInfo, projectInfo, nSemana = "1") {
   const projectName = `Semana #${nSemana}-${projectInfo.title}`;
-  const idProject = (await addToggle(databaseId, projectInfo.title)).results[0].id;
+  const idProject = (await addToggle(databaseId, projectInfo.title)).results[0]
+    .id;
 
   for (const tutor of tutorInfo) {
     console.log(`Criando templates do(a) ${tutor.name}`);
@@ -18,13 +24,14 @@ export async function createTemplate(tutorInfo,projectInfo,nSemana='1') {
         await initialTemplateStudent(idTutor, student, projectName)
       ).results[0].id;
 
-      const [idRequisiteProject,idRequisiteEvaluationProject] = await Promise.all([
-        findIdRequisiteProject(idInitialTemplate) ,
-        findIdEvaluationRequisitesProject(idInitialTemplate) 
-      ])
+      const [idRequisiteProject, idRequisiteEvaluationProject] =
+        await Promise.all([
+          findIdRequisiteProject(idInitialTemplate),
+          findIdEvaluationRequisitesProject(idInitialTemplate),
+        ]);
 
-      addRequisitesProject(idRequisiteProject,projectInfo);
-      addRequisitesEvaluationProject(idRequisiteEvaluationProject,student);
+      addRequisitesProject(idRequisiteProject, projectInfo);
+      addRequisitesEvaluationProject(idRequisiteEvaluationProject, student);
     }
   }
 }
@@ -101,7 +108,7 @@ async function initialTemplateStudent(blockId, student, projectName) {
   }
 }
 
-async function addRequisitesProject(id,projectInfo) {
+async function addRequisitesProject(id, projectInfo) {
   try {
     await notion.blocks.children.append({
       block_id: id,
@@ -149,19 +156,21 @@ async function findIdEvaluationRequisitesProject(id) {
   return lastid;
 }
 
-async function addToggle(blockId,content){
+async function addToggle(blockId, content) {
   try {
     const response = await notion.blocks.children.append({
-      block_id:blockId,
-      children:[{
-        type:"toggle",
-        toggle:{
-          text:addText(content)
-        }
-      }]
-    })
-    return response; 
-  } catch (error) { 
-      console.log(error)
+      block_id: blockId,
+      children: [
+        {
+          type: "toggle",
+          toggle: {
+            text: addText(content),
+          },
+        },
+      ],
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
   }
 }
