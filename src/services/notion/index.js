@@ -1,33 +1,13 @@
 import { Client } from "@notionhq/client";
-import "./setup.js";
-import { getProjetAndStudentsInfo } from "./services/google/spreadsheet.js";
-import { addText, addToggle } from "./utils/notion/index.js";
+import { addText, getMessageFeedbackCode, createTemplateRequestProject, createTemplateRequisitesEvaluationProject } from "../../utils/notion/index.js";
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
-const tutorInfo = [
-  {
-    name: "guga",
-    students: [],
-  },
-  {
-    name: "leo",
-    students: [],
-  },
-  {
-    name: "thiago",
-    students: [],
-  },
-  {
-    name: "gabriel",
-    students: [],
-  },
-];
 const databaseId = process.env.NOTION_DATABASE_ID;
 
-async function main() {
-  const projectName = "### Semana #17-Sing me a Song";
-  const idProject = (await addToggle(databaseId, projectInfo.title)).results[0]
-    .id;
+export async function createTemplate(tutorInfo,projectInfo,nSemana='1') {
+  const projectName = `Semana #${nSemana}-${projectInfo.title}`;
+  const idProject = (await addToggle(databaseId, projectInfo.title)).results[0].id;
+
   for (const tutor of tutorInfo) {
     console.log(`Criando templates do(a) ${tutor.name}`);
 
@@ -37,11 +17,13 @@ async function main() {
       const idInitialTemplate = (
         await initialTemplateStudent(idTutor, student, projectName)
       ).results[0].id;
+
       const [idRequisiteProject,idRequisiteEvaluationProject] = await Promise.all([
         findIdRequisiteProject(idInitialTemplate) ,
         findIdEvaluationRequisitesProject(idInitialTemplate) 
       ])
-      addRequisitesProject(idRequisiteProject);
+
+      addRequisitesProject(idRequisiteProject,projectInfo);
       addRequisitesEvaluationProject(idRequisiteEvaluationProject,student);
     }
   }
@@ -119,11 +101,11 @@ async function initialTemplateStudent(blockId, student, projectName) {
   }
 }
 
-async function addRequisitesProject(id) {
+async function addRequisitesProject(id,projectInfo) {
   try {
     await notion.blocks.children.append({
       block_id: id,
-      children: createTemplateRequestProject(),
+      children: createTemplateRequestProject(projectInfo),
     });
   } catch (e) {}
 }
@@ -135,67 +117,6 @@ async function addRequisitesEvaluationProject(id, student) {
       children: createTemplateRequisitesEvaluationProject(student),
     });
   } catch (e) {}
-}
-
-function createTemplateRequisitesEvaluationProject(student) {
-  const requestProjectFormated = student.requisitesReview.map((requisite) => {
-    return {
-      type: "bulleted_list_item",
-      bulleted_list_item: {
-        text: addText(requisite.description + ": " + requisite.evaluation),
-      },
-    };
-  });
-  return requestProjectFormated;
-}
-
-function createTemplateRequestProject() {
-  const requestProjectFormated = projectInfo.requisites.map((request) => {
-    if (request.note === undefined) {
-      return {
-        type: "bulleted_list_item",
-        bulleted_list_item: {
-          text: [
-            {
-              type: "text",
-              text: {
-                content: request.description,
-              },
-            },
-          ],
-        },
-      };
-    }
-    return {
-      type: "toggle",
-      toggle: {
-        text: [
-          {
-            type: "text",
-            text: {
-              content: request.description,
-            },
-          },
-        ],
-        children: [
-          {
-            type: "bulleted_list_item",
-            bulleted_list_item: {
-              text: [
-                {
-                  type: "text",
-                  text: {
-                    content: request.note,
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    };
-  });
-  return requestProjectFormated;
 }
 
 async function findIdRequisiteProject(id) {
@@ -228,23 +149,19 @@ async function findIdEvaluationRequisitesProject(id) {
   return lastid;
 }
 
-function getMessageFeedbackCode() {
-  return `Feedback Qualitativo: disponível no Pull Request no GitHub (Pode fechar o Pull Request depois de ler, clicando em Close Pull Request.) "`;
-}
-
-function formatedStudents() {
-  tutorInfo.forEach((tutor) => {
-    studentsInfo.forEach((student) => {
-      if (tutor.name.toLowerCase() === student.tutor?.toLowerCase()) {
-        tutor.students.push(student);
-      }
-    });
-  });
-}
-
-const [projectInfo, studentsInfo] = await getProjetAndStudentsInfo();
-
-export async function createTemplate() {
-  formatedStudents();
-  main();
+async function addToggle(blockId,content){
+  try {
+    const response = await notion.blocks.children.append({
+      block_id:blockId,
+      children:[{
+        type:"toggle",
+        toggle:{
+          text:addText(content)
+        }
+      }]
+    })
+    return response; 
+  } catch (error) { 
+      console.log(error)
+  }
 }
