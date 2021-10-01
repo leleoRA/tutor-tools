@@ -8,7 +8,7 @@ import * as codeReviewController from "./controllers/codeReview.js";
 import * as communicationController from "./controllers/communication.js";
 import * as deliveryReviewController from "./controllers/deliveryReview.js";
 
-import { createTemplate } from "./notion.js";
+import * as hooks from "./utils/hooks/index.js";
 
 global.root = shell.pwd().stdout;
 
@@ -44,6 +44,7 @@ async function main() {
       break;
 
     case 4:
+      hooks.clear();
       break;
   }
 }

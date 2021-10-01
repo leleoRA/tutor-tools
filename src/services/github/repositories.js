@@ -1,6 +1,5 @@
 import axios from "axios";
 import shell from "shelljs";
-import osName from "os-name";
 
 import * as hooks from "../../utils/hooks/index.js";
 
@@ -18,7 +17,7 @@ export function getRepoInfs(repoURL) {
   };
 }
 
-export function fork(repoName, username) {
+export function fork(username, repoName) {
   console.log(
     `Iniciando fork do repositório "${repoName}" do usuário "${username}"...`
   );
@@ -70,20 +69,20 @@ export function clone(username, repoName, isDeliveryReview) {
   }
 }
 
-export function deleteFiles(forkName) {
+export function deleteFiles(repoName) {
   console.log(`Iniciando remoção dos arquivos da aplicação...`);
 
   const deleteIgnore = ["node_modules", "package-lock.json", "README.md"];
 
-  shell.ls(forkName).forEach((item) => {
-    if (!deleteIgnore.includes(item)) shell.rm("-rf", forkName + "/" + item);
+  shell.ls(repoName).forEach((item) => {
+    if (!deleteIgnore.includes(item)) shell.rm("-rf", repoName + "/" + item);
   });
 }
 
-export function commitAndPush(forkName, username) {
+export function commitAndPush(username, repoName) {
   console.log("Criando commit de revisão de código...");
 
-  shell.cd(forkName);
+  shell.cd(repoName);
 
   shell.exec("git add .");
   const commitResponse = shell.exec(
@@ -96,11 +95,11 @@ export function commitAndPush(forkName, username) {
   const failCommit = commitResponse.code !== 0;
   const failPush = pushResponse.code !== 0;
   if (failCommit || failPush) {
-    throw new CanNotCommitAndPush(forkName, username);
+    throw new CanNotCommitAndPush(repoName, username);
   }
 }
 
-export async function createPullRequest(repoName, username) {
+export async function createPullRequest(username, repoName) {
   console.log(`Criando pull request em "${repoName}"...`);
 
   const mainBranch = await getRepoMainBranch(username, repoName);
@@ -122,19 +121,6 @@ export async function createPullRequest(repoName, username) {
     .catch(({ response }) => {
       throw new CanNotPullRequest(repoName, username, response.status);
     });
-}
-
-export function clear() {
-  console.log("Removendo diretórios temporários...");
-  const system = osName();
-  const separator = system.includes("Windows") ? "\\" : "/";
-
-  const pathDirectoryList = shell.pwd().split(separator);
-  const actualDirectory = pathDirectoryList.pop();
-
-  if (actualDirectory === "temp") {
-    shell.rm("-rf", "*");
-  }
 }
 
 async function getRepoMainBranch(username, repoName) {

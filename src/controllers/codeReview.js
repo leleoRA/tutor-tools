@@ -19,13 +19,13 @@ export async function prepareReview() {
       const isDeliveryReview = false;
 
       try {
-        const forkName = gitHubService.fork(repoName, username);
+        const forkName = gitHubService.fork(username, repoName);
 
         shell.cd(root);
         gitHubService.clone(username, forkName, isDeliveryReview);
         gitHubService.deleteFiles(forkName);
         gitHubService.commitAndPush(forkName);
-        gitHubService.createPullRequest(repoName, username);
+        gitHubService.createPullRequest(username, repoName);
       } catch (err) {
         console.log(err);
       }
