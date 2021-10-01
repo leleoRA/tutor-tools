@@ -3,31 +3,21 @@ import "./setup.js";
 import readlineSync from "readline-sync";
 import shell from "shelljs";
 
-import * as authenticateController from "./controllers/gitHubTokenAuthenticate.js";
+import * as gitHubAuth from "./auth/gitHubTokenAuth.js";
+import * as codeReviewController from "./controllers/codeReview.js";
+import * as communicationController from "./controllers/communication.js";
+import * as deliveryReviewController from "./controllers/deliveryReview.js";
 
-import {
-  getRepoInfs,
-  fork,
-  clone,
-  deleteFiles,
-  commitAndPush,
-  clear,
-  createPullRequest,
-} from "./services/repositories.js";
+import { createTemplate } from "./notion.js";
 
-import { getLinks } from "./data/links.js";
-import { createTemplate } from './notion.js'
-import NotFoundError from "./errors/NotFound.js";
-
-const root = shell.pwd().stdout;
-const projectRepositories = await getLinks();
+global.root = shell.pwd().stdout;
 
 async function main() {
   const operations = [
-    "Feedback de Entrega",
-    "Feedback de Código",
+    "Revisão de Entrega",
+    "Revisão de Código",
+    "Gerar Comunicação",
     "Finalizar Avaliação",
-    "Criar template Notion"
   ];
 
   const index = readlineSync.keyInSelect(
@@ -37,80 +27,25 @@ async function main() {
 
   switch (index + 1) {
     case 1:
-      await deliveryReview();
+      await deliveryReviewController.prepareReview();
       break;
 
     case 2:
       try {
-        await authenticateController.authenticate();
-        await codeReview();
+        await gitHubAuth.authenticate();
+        await codeReviewController.prepareReview();
       } catch (err) {
         console.log(err);
       }
       break;
 
     case 3:
-      clearTempFiles();
+      await communicationController.prepareCommunication();
       break;
-    
+
     case 4:
-      await createTemplate();
       break;
   }
 }
 
 main();
-
-async function deliveryReview() {
-  if (projectRepositories.length === 0) {
-    throw new NotFoundError("repositórios");
-  }
-
-  shell.mkdir("./temp/delivery-review");
-
-  await Promise.all(
-    projectRepositories.map((repoURL) => {
-      const { username, repoName } = getRepoInfs(repoURL);
-
-      try {
-        shell.cd(root);
-        clone(username, repoName, true);
-      } catch (err) {
-        console.log(err);
-        return false;
-      }
-    })
-  );
-}
-
-async function codeReview() {
-
-  if(projectRepositories.length === 0) {
-    throw new NotFoundError("repositórios");
-  }
-
-  shell.mkdir("./temp/code-review");
-
-  await Promise.all(
-    projectRepositories.forEach(async (repoURL) => {
-      const { username, repoName } = getRepoInfs(repoURL);
-
-      try {
-        const forkName = await fork(repoName, username);
-
-        shell.cd(root);
-        clone(username, forkName, false);
-        deleteFiles(forkName);
-        commitAndPush(forkName);
-        createPullRequest(repoName, username);
-      } catch (err) {
-        console.log(err);
-      }
-    })
-  );
-}
-
-async function clearTempFiles() {
-  shell.cd(`${root}/temp`);
-  clear();
-}

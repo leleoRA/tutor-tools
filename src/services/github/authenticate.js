@@ -2,12 +2,14 @@ import axios from "axios";
 
 import { validateGitHubToken } from "validate-github-token";
 
-import * as api from "../../utils/api/index.js";
+import * as hooks from "../../utils/hooks/index.js";
 
 export async function validadeUserTokenDomain(gitHubName, gitHubToken) {
+  const config = hooks.getConfig(process.env.GIT_TOKEN);
+
   const response = await axios.get(
     `https://api.github.com/users/${gitHubName}`,
-    api.getConfig(gitHubToken)
+    config
   );
 
   if (!("plan" in response.data)) {
