@@ -37,16 +37,12 @@ async function main() {
       const idInitialTemplate = (
         await initialTemplateStudent(idTutor, student, projectName)
       ).results[0].id;
-      const idRequisiteProject = await findIdRequisiteProject(
-        idInitialTemplate
-      );
-      await addRequisitesProject(idRequisiteProject);
-      const idRequisiteEvaluationProject =
-        await findIdEvaluationRequisitesProject(idInitialTemplate);
-      await addRequisitesEvaluationProject(
-        idRequisiteEvaluationProject,
-        student
-      );
+      const [idRequisiteProject,idRequisiteEvaluationProject] = await Promise.all([
+        findIdRequisiteProject(idInitialTemplate) ,
+        findIdEvaluationRequisitesProject(idInitialTemplate) 
+      ])
+      addRequisitesProject(idRequisiteProject);
+      addRequisitesEvaluationProject(idRequisiteEvaluationProject,student);
     }
   }
 }
@@ -204,16 +200,14 @@ function createTemplateRequestProject() {
 
 async function findIdRequisiteProject(id) {
   let lastid = id;
+  let response = await notion.blocks.children.list({ block_id: id });
+  const path = [1, 1];
+  let i = 0;
   try {
-    // Como assim ele roda mais rápido gerando o erro do que parando o while? DIFERENÇA DE FUNCK 9 SEGUNDOS
-    const response = await notion.blocks.children.list({ block_id: id });
     while (response.results.length >= 1) {
-      const response = await notion.blocks.children.list({ block_id: lastid });
-      if (response.results.length > 1) {
-        lastid = response.results[1].id;
-      } else {
-        lastid = response.results[0].id;
-      }
+      lastid = response.results[path[i]].id;
+      i = i + 1;
+      response = await notion.blocks.children.list({ block_id: lastid });
     }
   } catch (error) {}
   return lastid;
@@ -221,14 +215,14 @@ async function findIdRequisiteProject(id) {
 
 async function findIdEvaluationRequisitesProject(id) {
   let lastid = id;
+  let response = await notion.blocks.children.list({ block_id: id });
+  const path = [1, 2];
+  let i = 0;
   try {
-    const response = await notion.blocks.children.list({ block_id: id });
-    const path = [1, 2];
-    let i = 0;
     while (response.results.length >= 1) {
-      const response = await notion.blocks.children.list({ block_id: lastid });
       lastid = response.results[path[i]].id;
       i = i + 1;
+      response = await notion.blocks.children.list({ block_id: lastid });
     }
   } catch (error) {}
   return lastid;
