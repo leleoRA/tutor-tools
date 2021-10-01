@@ -2,10 +2,12 @@ import axios from "axios";
 import shell from "shelljs";
 import osName from "os-name";
 
-import CanNotFork from "../errors/CanNotFork.js";
-import CanNotClone from "../errors/CanNotClone.js";
-import CanNotCommitAndPush from "../errors/CanNotCommitAndPush.js";
-import CanNotPullRequest from "../errors/CanNotPullRequest.js";
+import * as hooks from "../../utils/hooks/index.js";
+
+import CanNotClone from "../../errors/CanNotClone.js";
+import CanNotCommitAndPush from "../../errors/CanNotCommitAndPush.js";
+import CanNotFork from "../../errors/CanNotFork.js";
+import CanNotPullRequest from "../../errors/CanNotPullRequest.js";
 
 export function getRepoInfs(repoURL) {
   const urlInfs = repoURL.split("/");
@@ -22,12 +24,7 @@ export function fork(repoName, username) {
   );
 
   const body = {};
-
-  const config = {
-    headers: {
-      Authorization: `token ${process.env.GIT_TOKEN}`,
-    },
-  };
+  const config = hooks.getConfig(process.env.GIT_TOKEN);
 
   const forkName = axios
     .post(
@@ -114,11 +111,7 @@ export async function createPullRequest(repoName, username) {
     base: mainBranch,
   };
 
-  const config = {
-    headers: {
-      Authorization: `token ${process.env.GIT_TOKEN}`,
-    },
-  };
+  const config = hooks.getConfig(process.env.GIT_TOKEN);
 
   return axios
     .post(
@@ -156,11 +149,7 @@ async function getRepoMainBranch(username, repoName) {
   });
 
   async function request() {
-    const config = {
-      headers: {
-        Authorization: `token ${process.env.GIT_TOKEN}`,
-      },
-    };
+    const config = hooks.getConfig(process.env.GIT_TOKEN);
 
     return axios.get(
       `https://api.github.com/repos/${username}/${repoName}/branches`,
