@@ -4,8 +4,6 @@
   "type": "module",
   "main": "./src/index.js",
   "scripts": {
-    "google": "node ./src/spreadsheet.js",
-    "notion": "node ./src/notion.js",
     "start": "node ./src/index.js"
   },
   "author": "Driven Education",
