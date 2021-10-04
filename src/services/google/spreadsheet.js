@@ -1,9 +1,6 @@
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import creds from "../../../client_secret_google.js";
 
-const spreadsheetId = "1CMrGiaLQ8c8P8HxQF0dzn8nGKN1uiy2Dj_645KX_IpY";
-const sheetTitle = "Sing me a song";
-
 const columnsReference = {
   endColumn: 20,
   initialColumnRequisit: 4,
@@ -18,7 +15,7 @@ const rowsReference = {
   rowRequisit: 1,
 };
 
-export async function getProjetAndStudentsInfo() {
+export async function getProjetAndStudentsInfo(spreadsheetId, sheetTitle) {
   var doc = new GoogleSpreadsheet(spreadsheetId);
 
   doc.useServiceAccountAuth(creds);
@@ -40,15 +37,19 @@ export async function getProjetAndStudentsInfo() {
     title: sheetTitle,
     requisites: requisitesProject,
   };
-  const studentsInfo = getStudentsResults(sheet);
 
-  return [projectInfo, studentsInfo];
+  const studentsInfo = getStudentsResults(sheet);
+  const tutors = getTutors(sheet);
+
+  return [projectInfo, studentsInfo, tutors];
 }
+
 function convertRequisiteEvaluation(evaluation) {
   if (evaluation === 0) return "Requisitos entregues totalmente";
   else if (evaluation === 1) return "Requisitos entregues parcialmente";
   return "Requisitos não entregues";
 }
+
 function getRequisitesProject(sheet) {
   const requisitesProject = [];
 
@@ -66,6 +67,7 @@ function getRequisitesProject(sheet) {
 
   return requisitesProject;
 }
+
 function getStudentsResults(sheet) {
   const studentsInfo = [];
   for (
@@ -86,6 +88,7 @@ function getStudentsResults(sheet) {
   }
   return studentsInfo;
 }
+
 function getRequisitesEvaluationByRow(sheet, row) {
   const requisiteEvaluation = [];
   for (
@@ -103,9 +106,6 @@ function getRequisitesEvaluationByRow(sheet, row) {
   return requisiteEvaluation;
 }
 
-function extractIdByUrl(url) {
-  const id = url.split("/")[5];
-}
 function getTutors(sheet) {
   const tutors = [];
   for (

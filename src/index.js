@@ -1,5 +1,6 @@
 import "./setup.js";
 
+import chalk from "chalk";
 import readlineSync from "readline-sync";
 import shell from "shelljs";
 
@@ -8,7 +9,7 @@ import * as codeReviewController from "./controllers/codeReview.js";
 import * as communicationController from "./controllers/communication.js";
 import * as deliveryReviewController from "./controllers/deliveryReview.js";
 
-import { createTemplate } from "./notion.js";
+import * as hooks from "./utils/hooks/index.js";
 
 global.root = shell.pwd().stdout;
 
@@ -22,7 +23,7 @@ async function main() {
 
   const index = readlineSync.keyInSelect(
     operations,
-    "Qual operação deseja realizar?"
+    chalk.bold("Qual operação deseja realizar?")
   );
 
   switch (index + 1) {
@@ -40,10 +41,15 @@ async function main() {
       break;
 
     case 3:
-      await communicationController.prepareCommunication();
+      await communicationController.prepareCommunication(
+        spreadsheetId,
+        sheetTitle,
+        nSemana
+      );
       break;
 
     case 4:
+      hooks.clear();
       break;
   }
 }
