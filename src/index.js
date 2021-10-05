@@ -11,11 +11,16 @@ import * as deliveryReviewController from "./controllers/deliveryReview.js";
 
 import * as hooks from "./utils/hooks/index.js";
 import classData from "./data/index.js";
+import userInputValidation from "./utils/userInputValidation/index.js";
 
 global.root = shell.pwd().stdout;
 
 async function main() {
-  askInformation();
+  const classInfo = askInformation();
+  const module = askModule(classInfo);
+  const project = askProject(module);
+
+  console.log(project);
 }
 
 function askInformation() {
@@ -26,11 +31,9 @@ function askInformation() {
     chalk.bold("Olá! Bem-vindo ao Tutor-Tools! Em qual turma você trabalha atualmente?")
   );
 
-  const validIndex = (index + 1) > 0 && (index + 1) <= classNames.length;
+  userInputValidation(index);
 
-  if(validIndex) {
-    askModule(classData[index]);
-  }
+  return classData[index];
 }
 
 function askModule(classInfo) {
@@ -41,11 +44,9 @@ function askModule(classInfo) {
     chalk.bold("O projeto que você deseja avaliar faz parte de qual módulo?")
   );
 
-  const validIndex = (index + 1) > 0 && (index + 1) <= moduleNames.length;
+  userInputValidation(index);
 
-  if(validIndex) {
-    askProject(classInfo.modules[index]);
-  }
+  return classInfo.modules[index];
 }
 
 function askProject(module) {
@@ -56,12 +57,9 @@ function askProject(module) {
     chalk.bold("E por fim, qual projeto você deseja avaliar?")
   );
 
-  const validIndex = (index + 1) > 0 && (index + 1) <= projectNames.length;
+  userInputValidation(index);
 
-  if(validIndex) {
-    console.log(module.projects[index]);
-    //chamar askOperation();
-  }
+  return module.projects[index];
 }
 
 async function askOperation() {
@@ -106,3 +104,5 @@ async function askOperation() {
 }
 
 main();
+
+

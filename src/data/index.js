@@ -9,14 +9,17 @@ const classData = [
         projects: [
           {
             name: "Globo.com",
-            numberOfRepos: 1,
-            criteriaColumn: ["E", "J"],
-            week: 1
+            isFullStack: true,
+            initialColumnRequisit: "E",
+            endColumnRequisit: "J",
+            week: 1,
+            expectationColumn: "F"
           },
           {
             name: "Instagram",
-            numberOfRepos: 1,
-            criteriaColumn: ["E", "J"],
+            isFullStack: true,
+            initialColumnRequisit: "E",
+            endColumnRequisit: "J",
             week: 2
           }
         ]
@@ -28,20 +31,23 @@ const classData = [
         projects: [
           {
             name: "Foodcamp",
-            numberOfRepos: 1,
-            criteriaColumn: ["E", "J"],
+            isFullStack: true,
+            initialColumnRequisit: "E",
+            endColumnRequisit: "J",
             week: 3
           },
           {
             name: "Parrot Card Game",
-            numberOfRepos: 1,
-            criteriaColumn: ["E", "J"],
+            isFullStack: true,
+            initialColumnRequisit: "E",
+            endColumnRequisit: "J",
             week: 4
           },
           {
             name: "Bate-Papo Uol",
-            numberOfRepos: 1,
-            criteriaColumn: ["E", "J"],
+            isFullStack: true,
+            initialColumnRequisit: "E",
+            endColumnRequisit: "J",
             week: 5
           }
         ]
@@ -57,14 +63,16 @@ const classData = [
         projects: [
           {
             name: "globo.com",
-            qtddRepos: 1,
-            criteriaColumn: ["E", "J"],
+            isFullStack: true,
+            initialColumnRequisit: "E",
+            endColumnRequisit: "J",
             week: 17,
           },
           {
             name: "globo.com",
-            qtddRepos: 1,
-            criteriaColumn: ["E", "J"],
+            isFullStack: true,
+            initialColumnRequisit: "E",
+            endColumnRequisit: "J",
             week: 17,
           }
         ]
@@ -76,8 +84,9 @@ const classData = [
         projects: [
           {
             name: "globo.com",
-            qtddRepos: 1,
-            criteriaColumn: ["E", "J"],
+            isFullStack: true,
+            initialColumnRequisit: "E",
+            endColumnRequisit: "J",
             week: 17,
           }
         ]
