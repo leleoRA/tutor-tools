@@ -10,7 +10,7 @@ import * as communicationController from "./controllers/communication.js";
 import * as deliveryReviewController from "./controllers/deliveryReview.js";
 
 import * as hooks from "./utils/hooks/index.js";
-import data from "./data/index.js";
+import classData from "./data/index.js";
 
 global.root = shell.pwd().stdout;
 
@@ -19,7 +19,7 @@ async function main() {
 }
 
 function askInformation() {
-  const classes = data.map((classInfo) => {
+  const classes = classData.map((classInfo) => {
     return "Turma " + classInfo.turma;
   });
   console.log(classes);
@@ -29,26 +29,47 @@ function askInformation() {
     chalk.bold("Olá! Bem-vindo ao Tutor-Tools! Em qual turma você trabalha atualmente?")
   );
 
-  switch (index + 1) {
-    case 1:
-      askModule();
-      break;
+  const validIndex = (index + 1) > 0 && (index + 1) <= classes.length;
 
-    case 2:
-      break;
-
+  if(validIndex) {
+    askModule(classData[index]);
   }
 }
 
-function askModule() {
-  const modules = data[1].modulos.map((modulo) => {
-    return "Modulo " + modulo.id;
+function askModule(turma) {
+  const modules = turma.modulos.map((m) => {
+    return "Modulo " + m.id + ": " + m.nome;
   });
 
   const index = readlineSync.keyInSelect(
     modules,
     chalk.bold("O projeto que você deseja avaliar faz parte de qual módulo?")
   );
+
+  const validIndex = (index + 1) > 0 && (index + 1) <= modules.length;
+
+  if(validIndex) {
+    askProject(turma.modulos[index]);
+  }
+}
+
+function askProject(modulo) {
+  console.log(modulo);
+
+  const projects = modulo.projetos.map((p) => {
+    return p.nome;
+  });
+
+  const index = readlineSync.keyInSelect(
+    projects,
+    chalk.bold("E por fim, qual projeto você deseja avaliar?")
+  );
+
+  const validIndex = (index + 1) > 0 && (index + 1) <= projects.length;
+
+  if(validIndex) {
+    console.log(modulo.projetos[index]);
+  }
 }
 
 async function askOperation() {

@@ -1,4 +1,4 @@
-const data = [
+const classData = [
   {
     turma: 3,
     modulos: [
@@ -71,6 +71,7 @@ const data = [
       },
       {
         id: 2,
+        nome: "moduloeeee",
         link: "www.google.com",
         projetos: [
           {
@@ -84,4 +85,4 @@ const data = [
   }
 ];
 
-export default data;
+export default classData;
