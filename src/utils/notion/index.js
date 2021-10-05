@@ -1,12 +1,16 @@
-export function addText(content) {
-  return [
-    {
-      type: 'text',
+import { Client } from "@notionhq/client"
+const notion = new Client({ auth: process.env.NOTION_TOKEN })
+
+
+export function addText(content,annotations={}){
+  return  [{
+      type: "text",
       text: {
-        content,
+        content: content
       },
-    },
-  ]
+      annotations,
+  }]
+
 }
 
 export function getMessageFeedbackCode() {
@@ -14,13 +18,17 @@ export function getMessageFeedbackCode() {
 }
 
 export function createTemplateRequisitesEvaluationProject(student) {
-  const requestProjectFormated = student.requisitesReview.map((requisite) => ({
-    type: 'bulleted_list_item',
-    bulleted_list_item: {
-      text: addText(`${requisite.description}: ${requisite.evaluation}`),
-    },
-  }))
-  return requestProjectFormated
+
+  const requestProjectFormated = student.requisitesReview.map((requisite) => {
+    return {
+      type: "bulleted_list_item",
+      bulleted_list_item: {
+        text: addText(requisite.description + ": " + requisite.evaluation)
+      },
+    };
+  });
+  return requestProjectFormated;
+
 }
 
 export function createTemplateRequestProject(projectInfo) {
@@ -67,7 +75,18 @@ export function createTemplateRequestProject(projectInfo) {
           },
         ],
       },
-    }
-  })
-  return requestProjectFormated
+
+    };
+  });
+  return requestProjectFormated;
+}
+export function getColorForEvaluationString(evaluation){
+  if (evaluation.toLowerCase() === 'acima das expectativas'){
+    return "blue";
+  }
+  else if (evaluation.toLowerCase() === 'abaixo das expectativas'){
+    return "yellow"
+  }
+  return "gray"
+
 }
