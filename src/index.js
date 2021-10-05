@@ -16,14 +16,24 @@ import userInputValidation from "./utils/userInputValidation/index.js";
 global.root = shell.pwd().stdout;
 
 async function main() {
-  const classInfo = askInformation();
+  const classInfo = askClass();
   const module = askModule(classInfo);
   const project = askProject(module);
 
-  console.log(project);
+  const data = {
+    className: classInfo.className,
+    module: {
+      id: module.id,
+      name: module.name,
+      link: module.link,
+      project: project
+    }
+  }
+
+  askOperation(data);
 }
 
-function askInformation() {
+function askClass() {
   const classNames = classData.map((classInfo) => "Turma " + classInfo.className);
 
   const index = readlineSync.keyInSelect(
@@ -62,7 +72,7 @@ function askProject(module) {
   return module.projects[index];
 }
 
-async function askOperation() {
+async function askOperation(projectInfo) {
   const operations = [
     "Revisão de Entrega",
     "Revisão de Código",
