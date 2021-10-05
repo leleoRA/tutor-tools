@@ -25,18 +25,18 @@ async function main() {
     operations,
     chalk.bold('Qual operação deseja realizar?')
   )
-  const spreadsheetId = ''
-  const sheetTitle = ''
-  const nSemana = ''
+  const spreadsheetId = '1WggtFYE6R7OY0kFMIAv-IjY-PN4OZ3EJSqmsveWqTjM'
+  const sheetTitle = 'teste'
+  const nSemana = '17'
   switch (index + 1) {
     case 1:
-      await deliveryReviewController.prepareReview()
+      await deliveryReviewController.prepareReview(spreadsheetId, sheetTitle)
       break
 
     case 2:
       try {
         await gitHubAuth.authenticate()
-        await codeReviewController.prepareReview()
+        await codeReviewController.prepareReview(spreadsheetId, sheetTitle)
       } catch (err) {
         console.log(err)
       }

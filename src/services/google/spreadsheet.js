@@ -8,11 +8,12 @@ const columnsReference = {
   endColumnRequisit: 10,
   nameColumn: 0,
   tutorColumn: 1,
+  linksColumn: 2,
   expectationColumn: 11,
 }
 const rowsReference = {
   startRowSheet: 3,
-  endRowSheet: 52,
+  endRowSheet: 7,
   rowRequisit: 1,
 }
 
@@ -96,27 +97,35 @@ function getTutors(sheet) {
 }
 
 export async function getRepoLinks(spreadsheetId, sheetTitle) {
-  const tutor = process.env.TUTOR_NAME
+  const tutor = process.env.TUTOR_NAME.toLowerCase()
 
   const links = []
   const doc = new GoogleSpreadsheet(spreadsheetId)
   doc.useServiceAccountAuth(creds)
 
   await doc.loadInfo()
+
   const sheet = doc.sheetsByTitle[sheetTitle]
 
-  const rows = await sheet.getRows({ offset: 2, limit: 52 })
+  await sheet.loadCells({
+    startColumnIndex: 0,
+    endColumnIndex: columnsReference.linksColumn + 1,
+    startRowIndex: 0,
+    endRowIndex: rowsReference.endRowSheet,
+  })
 
-  for (let i = 0; i <= rows.length; i += 1) {
-    const row = rows[i]
-    if (row !== undefined) {
-      if (row._rawData[1].toLowerCase() === tutor.toLowerCase()) {
-        const link = rows[i]._rawData[2]
-        links.push(link)
-      }
+  for (
+    let row = rowsReference.startRowSheet;
+    row < rowsReference.endRowSheet;
+    row += 1
+  ) {
+    const tutorRow = sheet
+      .getCell(row, columnsReference.tutorColumn)
+      .value.toLowerCase()
+    if (tutorRow === tutor) {
+      links.push(sheet.getCell(row, columnsReference.linksColumn).value)
     }
   }
-
   return links
 }
 

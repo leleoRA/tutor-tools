@@ -4,9 +4,11 @@ import * as googleService from '../services/google/spreadsheet.js'
 import * as gitHubService from '../services/github/repositories.js'
 import NotFoundError from '../errors/NotFound.js'
 
-export async function prepareReview() {
-  const projectRepositories = googleService.getRepoLinks()
-
+export async function prepareReview(spreadsheetId, sheetTitle) {
+  const projectRepositories = await googleService.getRepoLinks(
+    spreadsheetId,
+    sheetTitle
+  )
   if (projectRepositories.length === 0) {
     throw new NotFoundError('repositórios')
   }
@@ -20,12 +22,12 @@ export async function prepareReview() {
       const isDeliveryReview = false
 
       try {
-        const forkName = gitHubService.fork(username, repoName)
+        const forkName = await gitHubService.fork(username, repoName)
 
         shell.cd(global.root)
         gitHubService.clone(username, forkName, isDeliveryReview)
         gitHubService.deleteFiles(forkName)
-        gitHubService.commitAndPush(forkName)
+        gitHubService.commitAndPush(username, forkName)
         gitHubService.createPullRequest(username, repoName)
       } catch (err) {
         console.log(err)

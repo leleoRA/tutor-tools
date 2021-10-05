@@ -6,6 +6,7 @@ import UnauthorizedError from '../errors/Unauthorized.js'
 export async function authenticate() {
   const gitHubToken = process.env.GIT_TOKEN
   const gitHubName = process.env.GIT_NAME
+  console.log('Tentando autenticar')
 
   try {
     await service.validadeGitHubTokenAndPermissions(gitHubToken)
@@ -17,4 +18,5 @@ export async function authenticate() {
 
     throw new UnauthorizedError(err.message)
   }
+  console.log('authenticaçao realizada com sucesso!')
 }

@@ -17,8 +17,10 @@ export function clear() {
 
   const pathDirectoryList = shell.pwd().split(separator)
   const actualDirectory = pathDirectoryList.pop()
-
   if (actualDirectory === 'temp') {
+    shell.rm('-rf', '*')
+  } else if (actualDirectory === 'tutor-tools') {
+    shell.cd('temp')
     shell.rm('-rf', '*')
   }
 }
