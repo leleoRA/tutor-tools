@@ -1,84 +1,84 @@
 const classData = [
   {
-    turma: 3,
-    modulos: [
+    className: 3,
+    modules: [
       {
         id: 1,
-        nome: "Front-end com interfaces estáticas",
+        name: "Front-end com interfaces estáticas",
         link: "www.google.com",
-        projetos: [
+        projects: [
           {
-            nome: "Globo.com",
-            qtddRepos: 1,
-            colunasDeCriterios: ["E", "J"],
-            semana: 1
+            name: "Globo.com",
+            numberOfRepos: 1,
+            criteriaColumn: ["E", "J"],
+            week: 1
           },
           {
-            nome: "Instagram",
-            qtddRepos: 1,
-            colunasDeCriterios: ["E", "J"],
-            semana: 2
+            name: "Instagram",
+            numberOfRepos: 1,
+            criteriaColumn: ["E", "J"],
+            week: 2
           }
         ]
       },
       {
         id: 2,
-        nome: "Front-end com interfaces dinâmicas",
+        name: "Front-end com interfaces dinâmicas",
         link: "www.google.com",
-        projetos: [
+        projects: [
           {
-            nome: "Foodcamp",
-            qtddRepos: 1,
-            colunasDeCriterios: ["E", "J"],
-            semana: 3
+            name: "Foodcamp",
+            numberOfRepos: 1,
+            criteriaColumn: ["E", "J"],
+            week: 3
           },
           {
-            nome: "Parrot Card Game",
-            qtddRepos: 1,
-            colunasDeCriterios: ["E", "J"],
-            semana: 4
+            name: "Parrot Card Game",
+            numberOfRepos: 1,
+            criteriaColumn: ["E", "J"],
+            week: 4
           },
           {
-            nome: "Bate-Papo Uol",
-            qtddRepos: 1,
-            colunasDeCriterios: ["E", "J"],
-            semana: 5
+            name: "Bate-Papo Uol",
+            numberOfRepos: 1,
+            criteriaColumn: ["E", "J"],
+            week: 5
           }
         ]
       }]
   },
   {
-    turma: 4,
-    modulos: [
+    className: 4,
+    modules: [
       {
         id: 1,
-        nome: "Modelagem e Arquitetura",
+        name: "Modelagem e Arquitetura",
         link: "www.google.com",
-        projetos: [
+        projects: [
           {
-            nome: "globo.com",
+            name: "globo.com",
             qtddRepos: 1,
-            colunasDeCriterios: ["E", "J"],
-            semana: 17,
+            criteriaColumn: ["E", "J"],
+            week: 17,
           },
           {
-            nome: "globo.com",
+            name: "globo.com",
             qtddRepos: 1,
-            colunasDeCriterios: ["E", "J"],
-            semana: 17,
+            criteriaColumn: ["E", "J"],
+            week: 17,
           }
         ]
       },
       {
         id: 2,
-        nome: "moduloeeee",
+        name: "moduloeeee",
         link: "www.google.com",
-        projetos: [
+        projects: [
           {
-            nome: "globo.com",
+            name: "globo.com",
             qtddRepos: 1,
-            colunasDeCriterios: ["E", "J"],
-            semana: 17,
+            criteriaColumn: ["E", "J"],
+            week: 17,
           }
         ]
       }]

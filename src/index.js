@@ -19,56 +19,48 @@ async function main() {
 }
 
 function askInformation() {
-  const classes = classData.map((classInfo) => {
-    return "Turma " + classInfo.turma;
-  });
-  console.log(classes);
+  const classNames = classData.map((classInfo) => "Turma " + classInfo.className);
 
   const index = readlineSync.keyInSelect(
-    classes,
+    classNames,
     chalk.bold("Olá! Bem-vindo ao Tutor-Tools! Em qual turma você trabalha atualmente?")
   );
 
-  const validIndex = (index + 1) > 0 && (index + 1) <= classes.length;
+  const validIndex = (index + 1) > 0 && (index + 1) <= classNames.length;
 
   if(validIndex) {
     askModule(classData[index]);
   }
 }
 
-function askModule(turma) {
-  const modules = turma.modulos.map((m) => {
-    return "Modulo " + m.id + ": " + m.nome;
-  });
+function askModule(classInfo) {
+  const moduleNames = classInfo.modules.map((m) => "Modulo " + m.id + ": " + m.name);
 
   const index = readlineSync.keyInSelect(
-    modules,
+    moduleNames,
     chalk.bold("O projeto que você deseja avaliar faz parte de qual módulo?")
   );
 
-  const validIndex = (index + 1) > 0 && (index + 1) <= modules.length;
+  const validIndex = (index + 1) > 0 && (index + 1) <= moduleNames.length;
 
   if(validIndex) {
-    askProject(turma.modulos[index]);
+    askProject(classInfo.modules[index]);
   }
 }
 
-function askProject(modulo) {
-  console.log(modulo);
-
-  const projects = modulo.projetos.map((p) => {
-    return p.nome;
-  });
+function askProject(module) {
+  const projectNames = module.projects.map((p) => p.name);
 
   const index = readlineSync.keyInSelect(
-    projects,
+    projectNames,
     chalk.bold("E por fim, qual projeto você deseja avaliar?")
   );
 
-  const validIndex = (index + 1) > 0 && (index + 1) <= projects.length;
+  const validIndex = (index + 1) > 0 && (index + 1) <= projectNames.length;
 
   if(validIndex) {
-    console.log(modulo.projetos[index]);
+    console.log(module.projects[index]);
+    //chamar askOperation();
   }
 }
 
