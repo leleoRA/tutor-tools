@@ -10,13 +10,15 @@ export function addText(content,annotations={}){
       },
       annotations,
   }]
+
 }
 
 export function getMessageFeedbackCode() {
-  return `Feedback Qualitativo: disponível no Pull Request no GitHub (Pode fechar o Pull Request depois de ler, clicando em Close Pull Request.) "`;
+  return `Feedback Qualitativo: disponível no Pull Request no GitHub (Pode fechar o Pull Request depois de ler, clicando em Close Pull Request.) "`
 }
 
 export function createTemplateRequisitesEvaluationProject(student) {
+
   const requestProjectFormated = student.requisitesReview.map((requisite) => {
     return {
       type: "bulleted_list_item",
@@ -26,31 +28,32 @@ export function createTemplateRequisitesEvaluationProject(student) {
     };
   });
   return requestProjectFormated;
+
 }
 
 export function createTemplateRequestProject(projectInfo) {
   const requestProjectFormated = projectInfo.requisites.map((request) => {
     if (request.note === undefined) {
       return {
-        type: "bulleted_list_item",
+        type: 'bulleted_list_item',
         bulleted_list_item: {
           text: [
             {
-              type: "text",
+              type: 'text',
               text: {
                 content: request.description,
               },
             },
           ],
         },
-      };
+      }
     }
     return {
-      type: "toggle",
+      type: 'toggle',
       toggle: {
         text: [
           {
-            type: "text",
+            type: 'text',
             text: {
               content: request.description,
             },
@@ -58,11 +61,11 @@ export function createTemplateRequestProject(projectInfo) {
         ],
         children: [
           {
-            type: "bulleted_list_item",
+            type: 'bulleted_list_item',
             bulleted_list_item: {
               text: [
                 {
-                  type: "text",
+                  type: 'text',
                   text: {
                     content: request.note,
                   },
@@ -72,6 +75,7 @@ export function createTemplateRequestProject(projectInfo) {
           },
         ],
       },
+
     };
   });
   return requestProjectFormated;
@@ -84,4 +88,5 @@ export function getColorForEvaluationString(evaluation){
     return "yellow"
   }
   return "gray"
+
 }
