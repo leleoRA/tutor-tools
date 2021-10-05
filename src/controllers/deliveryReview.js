@@ -1,29 +1,36 @@
-import shell from "shelljs";
+import shell from 'shelljs'
 
-import * as googleService from "../services/google/spreadsheet.js";
-import * as gitHubService from "../services/github/repositories.js";
+import * as googleService from '../services/google/spreadsheet.js'
+import * as gitHubService from '../services/github/repositories.js'
+import NotFoundError from '../errors/NotFound.js'
 
-export async function prepareReview() {
-  const projectRepositories = googleService.getRepoLinks();
+export async function prepareReview(spreadsheetId, sheetTitle) {
+  const projectRepositories = await googleService.getRepoLinks(
+    spreadsheetId,
+    sheetTitle
+  )
+
+  console.log(projectRepositories)
 
   if (projectRepositories.length === 0) {
-    throw new NotFoundError("repositórios");
+    throw new NotFoundError('repositórios')
   }
 
-  shell.mkdir("./temp/delivery-review");
+  shell.mkdir('./temp/delivery-review')
 
   await Promise.all(
+    // eslint-disable-next-line array-callback-return
     projectRepositories.map((repoURL) => {
-      const { username, repoName } = gitHubService.getRepoInfs(repoURL);
+      const { username, repoName } = gitHubService.getRepoInfs(repoURL)
 
-      const isDeliveryReview = true;
+      const isDeliveryReview = true
 
       try {
-        shell.cd(root);
-        gitHubService.clone(username, repoName, isDeliveryReview);
+        shell.cd(global.root)
+        gitHubService.clone(username, repoName, isDeliveryReview)
       } catch (err) {
-        console.log(err);
+        console.log(err)
       }
     })
-  );
+  )
 }

@@ -4,94 +4,96 @@ const classData = [
     modules: [
       {
         id: 1,
-        name: "Front-end com interfaces estáticas",
-        link: "www.google.com",
+        name: 'Front-end com interfaces estáticas',
+        link: 'www.google.com',
         projects: [
           {
-            name: "Globo.com",
+            name: 'Globo.com',
             isFullStack: true,
-            initialColumnRequisit: "E",
-            endColumnRequisit: "J",
+            initialColumnRequisit: 'E',
+            endColumnRequisit: 'J',
             week: 1,
-            expectationColumn: "F"
+            expectationColumn: 'F',
           },
           {
-            name: "Instagram",
+            name: 'Instagram',
             isFullStack: true,
-            initialColumnRequisit: "E",
-            endColumnRequisit: "J",
-            week: 2
-          }
-        ]
+            initialColumnRequisit: 'E',
+            endColumnRequisit: 'J',
+            week: 2,
+          },
+        ],
       },
       {
         id: 2,
-        name: "Front-end com interfaces dinâmicas",
-        link: "www.google.com",
+        name: 'Front-end com interfaces dinâmicas',
+        link: 'www.google.com',
         projects: [
           {
-            name: "Foodcamp",
+            name: 'Foodcamp',
             isFullStack: true,
-            initialColumnRequisit: "E",
-            endColumnRequisit: "J",
-            week: 3
+            initialColumnRequisit: 'E',
+            endColumnRequisit: 'J',
+            week: 3,
           },
           {
-            name: "Parrot Card Game",
+            name: 'Parrot Card Game',
             isFullStack: true,
-            initialColumnRequisit: "E",
-            endColumnRequisit: "J",
-            week: 4
+            initialColumnRequisit: 'E',
+            endColumnRequisit: 'J',
+            week: 4,
           },
           {
-            name: "Bate-Papo Uol",
+            name: 'Bate-Papo Uol',
             isFullStack: true,
-            initialColumnRequisit: "E",
-            endColumnRequisit: "J",
-            week: 5
-          }
-        ]
-      }]
+            initialColumnRequisit: 'E',
+            endColumnRequisit: 'J',
+            week: 5,
+          },
+        ],
+      },
+    ],
   },
   {
     className: 4,
     modules: [
       {
         id: 1,
-        name: "Modelagem e Arquitetura",
-        link: "www.google.com",
+        name: 'Modelagem e Arquitetura',
+        link: 'www.google.com',
         projects: [
           {
-            name: "globo.com",
+            name: 'globo.com',
             isFullStack: true,
-            initialColumnRequisit: "E",
-            endColumnRequisit: "J",
+            initialColumnRequisit: 'E',
+            endColumnRequisit: 'J',
             week: 17,
           },
           {
-            name: "globo.com",
+            name: 'globo.com',
             isFullStack: true,
-            initialColumnRequisit: "E",
-            endColumnRequisit: "J",
+            initialColumnRequisit: 'E',
+            endColumnRequisit: 'J',
             week: 17,
-          }
-        ]
+          },
+        ],
       },
       {
         id: 2,
-        name: "moduloeeee",
-        link: "www.google.com",
+        name: 'moduloeeee',
+        link: 'www.google.com',
         projects: [
           {
-            name: "globo.com",
+            name: 'globo.com',
             isFullStack: true,
-            initialColumnRequisit: "E",
-            endColumnRequisit: "J",
+            initialColumnRequisit: 'E',
+            endColumnRequisit: 'J',
             week: 17,
-          }
-        ]
-      }]
-  }
-];
+          },
+        ],
+      },
+    ],
+  },
+]
 
-export default classData;
+export default classData

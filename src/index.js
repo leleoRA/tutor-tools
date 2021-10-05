@@ -1,24 +1,23 @@
-import "./setup.js";
+import './setup.js'
 
-import chalk from "chalk";
-import readlineSync from "readline-sync";
-import shell from "shelljs";
+import chalk from 'chalk'
+import readlineSync from 'readline-sync'
+import shell from 'shelljs'
 
-import * as gitHubAuth from "./auth/gitHubTokenAuth.js";
-import * as codeReviewController from "./controllers/codeReview.js";
-import * as communicationController from "./controllers/communication.js";
-import * as deliveryReviewController from "./controllers/deliveryReview.js";
+import * as gitHubAuth from './auth/gitHubTokenAuth.js'
+import * as codeReviewController from './controllers/codeReview.js'
+import * as communicationController from './controllers/communication.js'
+import * as deliveryReviewController from './controllers/deliveryReview.js'
 
-import * as hooks from "./utils/hooks/index.js";
-import classData from "./data/index.js";
-import userInputValidation from "./utils/userInputValidation/index.js";
+import * as hooks from './utils/hooks/index.js'
+import * as userInteraction from './utils/userInteraction/index.js'
 
-global.root = shell.pwd().stdout;
+global.root = shell.pwd().stdout
 
 async function main() {
-  const classInfo = askClass();
-  const module = askModule(classInfo);
-  const project = askProject(module);
+  const classInfo = userInteraction.askClass()
+  const module = userInteraction.askModule(classInfo)
+  const project = userInteraction.askProject(module)
 
   const data = {
     className: classInfo.className,
@@ -26,93 +25,56 @@ async function main() {
       id: module.id,
       name: module.name,
       link: module.link,
-      project: project
-    }
+      project,
+    },
   }
 
-  askOperation(data);
-}
-
-function askClass() {
-  const classNames = classData.map((classInfo) => "Turma " + classInfo.className);
-
-  const index = readlineSync.keyInSelect(
-    classNames,
-    chalk.bold("Olá! Bem-vindo ao Tutor-Tools! Em qual turma você trabalha atualmente?")
-  );
-
-  userInputValidation(index);
-
-  return classData[index];
-}
-
-function askModule(classInfo) {
-  const moduleNames = classInfo.modules.map((m) => "Modulo " + m.id + ": " + m.name);
-
-  const index = readlineSync.keyInSelect(
-    moduleNames,
-    chalk.bold("O projeto que você deseja avaliar faz parte de qual módulo?")
-  );
-
-  userInputValidation(index);
-
-  return classInfo.modules[index];
-}
-
-function askProject(module) {
-  const projectNames = module.projects.map((p) => p.name);
-
-  const index = readlineSync.keyInSelect(
-    projectNames,
-    chalk.bold("E por fim, qual projeto você deseja avaliar?")
-  );
-
-  userInputValidation(index);
-
-  return module.projects[index];
+  askOperation(data)
 }
 
 async function askOperation(projectInfo) {
   const operations = [
-    "Revisão de Entrega",
-    "Revisão de Código",
-    "Gerar Comunicação",
-    "Finalizar Avaliação",
-  ];
+    'Revisão de Entrega',
+    'Revisão de Código',
+    'Gerar Comunicação',
+    'Finalizar Avaliação',
+  ]
 
   const index = readlineSync.keyInSelect(
     operations,
-    chalk.bold("Qual operação deseja realizar?")
-  );
-
+    chalk.bold('Qual operação deseja realizar?')
+  )
+  const spreadsheetId = '1WggtFYE6R7OY0kFMIAv-IjY-PN4OZ3EJSqmsveWqTjM'
+  const sheetTitle = 'teste'
+  const nSemana = '17'
   switch (index + 1) {
     case 1:
-      await deliveryReviewController.prepareReview();
-      break;
+      await deliveryReviewController.prepareReview(spreadsheetId, sheetTitle)
+      break
 
     case 2:
       try {
-        await gitHubAuth.authenticate();
-        await codeReviewController.prepareReview();
+        await gitHubAuth.authenticate()
+        await codeReviewController.prepareReview(spreadsheetId, sheetTitle)
       } catch (err) {
-        console.log(err);
+        console.log(err)
       }
-      break;
+      break
 
     case 3:
       await communicationController.prepareCommunication(
         spreadsheetId,
         sheetTitle,
         nSemana
-      );
-      break;
+      )
+      break
 
     case 4:
-      hooks.clear();
-      break;
+      hooks.clear()
+      break
+    default:
+      break
   }
 }
 
-main();
-
-
+main()
