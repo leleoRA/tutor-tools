@@ -20,8 +20,7 @@ async function main() {
     },
   }
 
-  console.log(data)
-  // userInteraction.askOperation(data)
+  userInteraction.askOperation(data)
 }
 
 main()
