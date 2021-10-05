@@ -1,40 +1,14 @@
-import { Client } from "@notionhq/client";
+import { Client } from '@notionhq/client'
 import {
   addText,
   getMessageFeedbackCode,
   createTemplateRequestProject,
   createTemplateRequisitesEvaluationProject,
+  getColorForEvaluationString,
 } from "../../utils/notion/index.js";
 
-const notion = new Client({ auth: process.env.NOTION_TOKEN });
-const databaseId = process.env.NOTION_DATABASE_ID;
-
-export async function createTemplate(tutorInfo, projectInfo, nSemana = "1") {
-  const projectName = `Semana #${nSemana}-${projectInfo.title}`;
-  const idProject = (await addToggle(databaseId, projectInfo.title)).results[0]
-    .id;
-
-  for (const tutor of tutorInfo) {
-    console.log(`Criando templates do(a) ${tutor.name}`);
-
-    const idTutor = (await addToggle(idProject, tutor.name)).results[0].id;
-
-    for (const student of tutor.students) {
-      const idInitialTemplate = (
-        await initialTemplateStudent(idTutor, student, projectName)
-      ).results[0].id;
-
-      const [idRequisiteProject, idRequisiteEvaluationProject] =
-        await Promise.all([
-          findIdRequisiteProject(idInitialTemplate),
-          findIdEvaluationRequisitesProject(idInitialTemplate),
-        ]);
-
-      addRequisitesProject(idRequisiteProject, projectInfo);
-      addRequisitesEvaluationProject(idRequisiteEvaluationProject, student);
-    }
-  }
-}
+const notion = new Client({ auth: process.env.NOTION_TOKEN })
+const databaseId = process.env.NOTION_DATABASE_ID
 
 async function initialTemplateStudent(blockId, student, projectName) {
   try {
@@ -42,54 +16,65 @@ async function initialTemplateStudent(blockId, student, projectName) {
       block_id: blockId,
       children: [
         {
-          type: "toggle",
+          type: 'toggle',
           toggle: {
             text: addText(student.name),
             children: [
               {
-                type: "heading_3",
+                type: 'heading_3',
                 heading_3: {
                   text: addText(projectName),
                 },
               },
               {
-                type: "toggle",
+                type: 'toggle',
                 toggle: {
-                  text: addText("Feedback de Entrega"),
+
+                  text: addText('Feedback de Entrega'),
+
+                  text: addText("Feedback de Entrega",{bold:true}),
+
                   children: [
                     {
-                      type: "bulleted_list_item",
+                      type: 'bulleted_list_item',
                       bulleted_list_item: {
+                        text: [
+                          addText("Avaliação Geral:")[0],
+                          addText(
+                            student.deliveryReview.evaluation,
+                            {
+                              color: getColorForEvaluationString(student.deliveryReview.evaluation),
+                              code:true
+                            }
+                          )[0]
+                        ],
+                      },
+                    },
+                    {
+                      type: 'toggle',
+                      toggle: {
                         text: addText(
-                          "Avaliação Geral: " +
-                            student.deliveryReview.evaluation
+                          'Quais foram os requisitos avaliados nesse projeto?'
                         ),
                       },
                     },
                     {
-                      type: "toggle",
+                      type: 'toggle',
                       toggle: {
-                        text: addText(
-                          "Quais foram os requisitos avaliados nesse projeto?"
-                        ),
-                      },
-                    },
-                    {
-                      type: "toggle",
-                      toggle: {
-                        text: addText("Avaliação por requisito"),
+                        text: addText('Avaliação por requisito'),
                       },
                     },
                   ],
                 },
               },
               {
-                type: "toggle",
+                type: 'toggle',
                 toggle: {
-                  text: addText("Feedback de Código"),
+
+                  text: addText("Feedback de Código",{bold:true}),
                   children: [
                     {
-                      type: "bulleted_list_item",
+                      type: 'bulleted_list_item',
                       bulleted_list_item: {
                         text: addText(getMessageFeedbackCode()),
                       },
@@ -101,10 +86,10 @@ async function initialTemplateStudent(blockId, student, projectName) {
           },
         },
       ],
-    });
-    return response;
+    })
+    return response
   } catch (error) {
-    console.error(error);
+    console.error(error)
   }
 }
 
@@ -113,8 +98,10 @@ async function addRequisitesProject(id, projectInfo) {
     await notion.blocks.children.append({
       block_id: id,
       children: createTemplateRequestProject(projectInfo),
-    });
-  } catch (e) {}
+    })
+  } catch (err) {
+    console.log(err)
+  }
 }
 
 async function addRequisitesEvaluationProject(id, student) {
@@ -122,38 +109,45 @@ async function addRequisitesEvaluationProject(id, student) {
     await notion.blocks.children.append({
       block_id: id,
       children: createTemplateRequisitesEvaluationProject(student),
-    });
-  } catch (e) {}
+    })
+  } catch (err) {
+    console.log(err)
+  }
 }
 
 async function findIdRequisiteProject(id) {
-  let lastid = id;
-  let response = await notion.blocks.children.list({ block_id: id });
-  const path = [1, 1];
-  let i = 0;
+  let lastid = id
+  let response = await notion.blocks.children.list({ block_id: id })
+  const path = [1, 1]
+  let i = 0
   try {
     while (response.results.length >= 1) {
-      lastid = response.results[path[i]].id;
-      i = i + 1;
-      response = await notion.blocks.children.list({ block_id: lastid });
+      lastid = response.results[path[i]].id
+      i += 1
+      response = await notion.blocks.children.list({ block_id: lastid })
     }
-  } catch (error) {}
-  return lastid;
+  } catch (err) {
+    console.log(err)
+  }
+  return lastid
 }
 
 async function findIdEvaluationRequisitesProject(id) {
-  let lastid = id;
-  let response = await notion.blocks.children.list({ block_id: id });
-  const path = [1, 2];
-  let i = 0;
+  let lastid = id
+  let response = await notion.blocks.children.list({ block_id: id })
+  const path = [1, 2]
+  let i = 0
   try {
     while (response.results.length >= 1) {
-      lastid = response.results[path[i]].id;
-      i = i + 1;
-      response = await notion.blocks.children.list({ block_id: lastid });
+      lastid = response.results[path[i]].id
+      i += 1
+      response = await notion.blocks.children.list({ block_id: lastid })
     }
-  } catch (error) {}
-  return lastid;
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.log(err)
+  }
+  return lastid
 }
 
 async function addToggle(blockId, content) {
@@ -162,15 +156,42 @@ async function addToggle(blockId, content) {
       block_id: blockId,
       children: [
         {
-          type: "toggle",
+          type: 'toggle',
           toggle: {
             text: addText(content),
           },
         },
       ],
-    });
-    return response;
+    })
+    return response
   } catch (error) {
-    console.log(error);
+    console.log(error)
+  }
+}
+
+export async function createTemplate(tutorInfo, projectInfo, nSemana = '1') {
+  const projectName = `Semana #${nSemana}-${projectInfo.title}`
+  const idProject = (await addToggle(databaseId, projectInfo.title)).results[0]
+    .id
+
+  for (const tutor of tutorInfo) {
+    console.log(`Criando templates do(a) ${tutor.name}`)
+
+    const idTutor = (await addToggle(idProject, tutor.name)).results[0].id
+
+    for (const student of tutor.students) {
+      const idInitialTemplate = (
+        await initialTemplateStudent(idTutor, student, projectName)
+      ).results[0].id
+
+      const [idRequisiteProject, idRequisiteEvaluationProject] =
+        await Promise.all([
+          findIdRequisiteProject(idInitialTemplate),
+          findIdEvaluationRequisitesProject(idInitialTemplate),
+        ])
+
+      addRequisitesProject(idRequisiteProject, projectInfo)
+      addRequisitesEvaluationProject(idRequisiteEvaluationProject, student)
+    }
   }
 }
