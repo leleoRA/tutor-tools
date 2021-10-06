@@ -1,15 +1,25 @@
 /* eslint-disable no-underscore-dangle */
-import { GoogleSpreadsheet } from 'google-spreadsheet'
+import {
+  GoogleSpreadsheet,
+  GoogleSpreadsheetWorksheet,
+} from 'google-spreadsheet'
 import creds from '../../../client_secret_google.js'
-import { convertRequisiteEvaluation } from '../../utils/google/index.js'
+import { convertRequisiteEvaluation } from '../../utils/google/index'
 import {
   convertLetterInNumber,
   extractIdByUrlSpreadsheet,
-} from '../../utils/tools/index.js'
+} from '../../utils/tools/index'
 import {
   columnsReferenceDefault,
   rowsReferenceDefault,
-} from '../../data/infoSpreadsheetDefault.js'
+} from '../../data/infoSpreadsheetDefault'
+
+import {
+  Iproject,
+  Istudent,
+  IrequisitesProject,
+  IprojectInfo,
+} from '../../interfaces/index'
 
 async function initSpreadsheet(spreadsheetId, sheetTitle) {
   const doc = new GoogleSpreadsheet(spreadsheetId)
@@ -34,9 +44,12 @@ function formatedColumns(project) {
   return columnsReference
 }
 
-function getRequisitesProject(sheet, columnsReference, rowsReference) {
+function getRequisitesProject(
+  sheet: GoogleSpreadsheetWorksheet,
+  columnsReference,
+  rowsReference
+): IrequisitesProject[] {
   const requisitesProject = []
-
   for (
     let col = columnsReference.initialColumnRequisit;
     col < columnsReference.endColumnRequisit;
@@ -74,7 +87,11 @@ function getRequisitesEvaluationByRow(
   return requisiteEvaluation
 }
 
-function getStudentsResults(sheet, columnsReference, rowsReference) {
+function getStudentsResults(
+  sheet: GoogleSpreadsheetWorksheet,
+  columnsReference,
+  rowsReference
+) {
   const studentsInfo = []
   for (
     let row = rowsReference.startRowSheet;
@@ -100,7 +117,7 @@ function getStudentsResults(sheet, columnsReference, rowsReference) {
   return studentsInfo
 }
 
-function getTutors(sheet, columnsReference, rowsReference) {
+function getTutors(sheet, columnsReference, rowsReference): Array<string> {
   const tutors = []
   for (
     let row = rowsReference.startRowSheet;
@@ -115,7 +132,10 @@ function getTutors(sheet, columnsReference, rowsReference) {
   return tutors
 }
 
-export async function getRepoLinks(urlSpreadsheetModule, project) {
+export async function getRepoLinks(
+  urlSpreadsheetModule: string,
+  project: Iproject
+): Promise<Array<string>> {
   const tutor = process.env.TUTOR_NAME.toLowerCase()
   const links = []
 
@@ -137,9 +157,9 @@ export async function getRepoLinks(urlSpreadsheetModule, project) {
     row < rowsReference.endRowSheet;
     row += 1
   ) {
-    const tutorRow = sheet
-      .getCell(row, columnsReference.tutorColumn)
-      .value?.toLowerCase()
+    const tutorRow = String(
+      sheet.getCell(row, columnsReference.tutorColumn).value
+    )?.toLowerCase()
     if (tutorRow === tutor) {
       links.push(sheet.getCell(row, columnsReference.linksColumn).value)
       if (project.isFullStack) {
@@ -150,7 +170,10 @@ export async function getRepoLinks(urlSpreadsheetModule, project) {
   return links
 }
 
-export async function getProjetAndStudentsInfo(urlSpreadsheetModule, project) {
+export async function getProjetAndStudentsInfo(
+  urlSpreadsheetModule: string,
+  project: Iproject
+): Promise<Array<IprojectInfo | Istudent[] | string[]>> {
   const spreadsheetId = extractIdByUrlSpreadsheet(urlSpreadsheetModule)
   const sheet = await initSpreadsheet(spreadsheetId, project.name)
 
