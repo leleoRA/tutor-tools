@@ -127,7 +127,7 @@ export async function getRepoLinks(urlSpreadsheetModule, project) {
 
   await sheet.loadCells({
     startColumnIndex: 0,
-    endColumnIndex: columnsReference.linksColumn + 1,
+    endColumnIndex: columnsReference.linksColumn + 2,
     startRowIndex: 0,
     endRowIndex: rowsReference.endRowSheet,
   })
@@ -142,6 +142,9 @@ export async function getRepoLinks(urlSpreadsheetModule, project) {
       .value?.toLowerCase()
     if (tutorRow === tutor) {
       links.push(sheet.getCell(row, columnsReference.linksColumn).value)
+      if (project.isFullStack) {
+        links.push(sheet.getCell(row, columnsReference.linksColumn2).value)
+      }
     }
   }
   return links

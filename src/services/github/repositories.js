@@ -44,7 +44,7 @@ export function clone(username, repoName, isDeliveryReview) {
     `Criando diretório temporário para o repositório "${repoName}"...`
   )
 
-  const folderName = `${repoName}-${username}`
+  const folderName = `${username}-${repoName}`
   const formattedFolderName = folderName.replace('_', '-')
 
   shell.cd(`temp/${isDeliveryReview ? 'delivery-review' : 'code-review'}`)
