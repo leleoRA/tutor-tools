@@ -5,7 +5,7 @@ import {
   createTemplateRequestProject,
   createTemplateRequisitesEvaluationProject,
   getColorForEvaluationString,
-} from "../../utils/notion/index.js";
+} from '../../utils/notion/index.js'
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN })
 const databaseId = process.env.NOTION_DATABASE_ID
@@ -29,24 +29,22 @@ async function initialTemplateStudent(blockId, student, projectName) {
               {
                 type: 'toggle',
                 toggle: {
-
                   text: addText('Feedback de Entrega'),
 
-                  text: addText("Feedback de Entrega",{bold:true}),
+                  text: addText('Feedback de Entrega', { bold: true }),
 
                   children: [
                     {
                       type: 'bulleted_list_item',
                       bulleted_list_item: {
                         text: [
-                          addText("Avaliação Geral:")[0],
-                          addText(
-                            student.deliveryReview.evaluation,
-                            {
-                              color: getColorForEvaluationString(student.deliveryReview.evaluation),
-                              code:true
-                            }
-                          )[0]
+                          addText('Avaliação Geral:')[0],
+                          addText(student.deliveryReview.evaluation, {
+                            color: getColorForEvaluationString(
+                              student.deliveryReview.evaluation
+                            ),
+                            code: true,
+                          })[0],
                         ],
                       },
                     },
@@ -70,8 +68,7 @@ async function initialTemplateStudent(blockId, student, projectName) {
               {
                 type: 'toggle',
                 toggle: {
-
-                  text: addText("Feedback de Código",{bold:true}),
+                  text: addText('Feedback de Código', { bold: true }),
                   children: [
                     {
                       type: 'bulleted_list_item',
