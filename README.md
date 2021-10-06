@@ -7,10 +7,8 @@ Em seguida, entre no projeto baixado e instale as dependencias rodando
 ```
 npm install 
 ```
-Após isso, vá até o seu github e gere um token com acesso para forks, pull requests e clones. Ao gerar o token, crie um arquivo .env baseado no .envExample e coloque seu token e o nome de usuário do github.
+Após isso, vá até o seu github e gere um token com acesso para forks, pull requests e clones. Ao gerar o token, crie um arquivo .env baseado no .envExample e coloque seu token e o nome de usuário do github. Além disso, o arquivo .env também deve conter o seu nome e as informações do token e database_id do Notion para gerar a comunicação do feedback.
 
 Feito isto, está tudo pronto para começarmos a usar o tutor tools!
-
-Copie os repositorios que deseja preparar para o feedback de codigo e os cole em ./src/data/links.js dentro do array repositories (formate os links para ficarem como strings) .
 
 
