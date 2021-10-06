@@ -1,8 +1,9 @@
 export const columnsReferenceDefault = {
-  endColumn: 20,
-  nameColumn: 0,
-  tutorColumn: 1,
-  expectationColumn: 11,
+  endColumn: 'R',
+  nameColumn: 'A',
+  tutorColumn: 'B',
+  expectationColumn: 'L',
+  linksColumn: 'C',
 }
 
 export const rowsReferenceDefault = {
