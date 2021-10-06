@@ -70,7 +70,7 @@ export async function askOperation(projectInfo) {
   const nSemana = '17'
   switch (index + 1) {
     case 1:
-      await deliveryReviewController.prepareReview(spreadsheetId, sheetTitle)
+      await deliveryReviewController.prepareReview(projectInfo)
       break
 
     case 2:
