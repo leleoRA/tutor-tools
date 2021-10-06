@@ -1,29 +1,40 @@
 /* eslint-disable no-underscore-dangle */
 import { GoogleSpreadsheet } from 'google-spreadsheet'
 import creds from '../../../client_secret_google.js'
+import { convertRequisiteEvaluation } from '../../utils/google/index.js'
+import {
+  convertLetterInNumber,
+  extractIdByUrlSpreadsheet,
+} from '../../utils/tools/index.js'
+import {
+  columnsReferenceDefault,
+  rowsReferenceDefault,
+} from '../../area51/default.js'
 
-const columnsReference = {
-  endColumn: 20,
-  initialColumnRequisit: 4,
-  endColumnRequisit: 10,
-  nameColumn: 0,
-  tutorColumn: 1,
-  linksColumn: 2,
-  expectationColumn: 11,
-}
-const rowsReference = {
-  startRowSheet: 3,
-  endRowSheet: 7,
-  rowRequisit: 1,
+async function initSpreadsheet(spreadsheetId, sheetTitle) {
+  const doc = new GoogleSpreadsheet(spreadsheetId)
+
+  doc.useServiceAccountAuth(creds)
+
+  await doc.loadInfo()
+
+  const sheet = doc.sheetsByTitle[sheetTitle]
+
+  return sheet
 }
 
-function convertRequisiteEvaluation(evaluation) {
-  if (evaluation === 0) return 'Requisitos entregues totalmente'
-  if (evaluation === 1) return 'Requisitos entregues parcialmente'
-  return 'Requisitos não entregues'
+function formatedColumns(project) {
+  const columnsReference = {
+    ...columnsReferenceDefault,
+    initialColumnRequisit: convertLetterInNumber(project.initialColumnRequisit),
+    endColumnRequisit: convertLetterInNumber(project.endColumnRequisit),
+    expectationColumn: convertLetterInNumber(project.expectationColumn),
+  }
+
+  return columnsReference
 }
 
-function getRequisitesProject(sheet) {
+function getRequisitesProject(sheet, columnsReference, rowsReference) {
   const requisitesProject = []
 
   for (
@@ -41,7 +52,12 @@ function getRequisitesProject(sheet) {
   return requisitesProject
 }
 
-function getRequisitesEvaluationByRow(sheet, row) {
+function getRequisitesEvaluationByRow(
+  sheet,
+  row,
+  columnsReference,
+  rowsReference
+) {
   const requisiteEvaluation = []
   for (
     let col = columnsReference.initialColumnRequisit;
@@ -58,7 +74,7 @@ function getRequisitesEvaluationByRow(sheet, row) {
   return requisiteEvaluation
 }
 
-function getStudentsResults(sheet) {
+function getStudentsResults(sheet, columnsReference, rowsReference) {
   const studentsInfo = []
   for (
     let row = rowsReference.startRowSheet;
@@ -72,14 +88,19 @@ function getStudentsResults(sheet) {
         evaluation: sheet.getCell(row, columnsReference.expectationColumn)
           .value,
       },
-      requisitesReview: getRequisitesEvaluationByRow(sheet, row),
+      requisitesReview: getRequisitesEvaluationByRow(
+        sheet,
+        row,
+        columnsReference,
+        rowsReference
+      ),
     }
     studentsInfo.push(student)
   }
   return studentsInfo
 }
 
-function getTutors(sheet) {
+function getTutors(sheet, columnsReference, rowsReference) {
   const tutors = []
   for (
     let row = rowsReference.startRowSheet;
@@ -96,16 +117,15 @@ function getTutors(sheet) {
   return tutors
 }
 
-export async function getRepoLinks(spreadsheetId, sheetTitle) {
+export async function getRepoLinks(urlSpreadsheetModule, project) {
   const tutor = process.env.TUTOR_NAME.toLowerCase()
-
   const links = []
-  const doc = new GoogleSpreadsheet(spreadsheetId)
-  doc.useServiceAccountAuth(creds)
 
-  await doc.loadInfo()
+  const spreadsheetId = extractIdByUrlSpreadsheet(urlSpreadsheetModule)
+  const sheet = await initSpreadsheet(spreadsheetId, project.name)
 
-  const sheet = doc.sheetsByTitle[sheetTitle]
+  const columnsReference = formatedColumns(project)
+  const rowsReference = rowsReferenceDefault
 
   await sheet.loadCells({
     startColumnIndex: 0,
@@ -129,14 +149,12 @@ export async function getRepoLinks(spreadsheetId, sheetTitle) {
   return links
 }
 
-export async function getProjetAndStudentsInfo(spreadsheetId, sheetTitle) {
-  const doc = new GoogleSpreadsheet(spreadsheetId)
+export async function getProjetAndStudentsInfo(urlSpreadsheetModule, project) {
+  const spreadsheetId = extractIdByUrlSpreadsheet(urlSpreadsheetModule)
+  const sheet = await initSpreadsheet(spreadsheetId, project.name)
 
-  doc.useServiceAccountAuth(creds)
-
-  await doc.loadInfo()
-
-  const sheet = doc.sheetsByTitle[sheetTitle]
+  const columnsReference = formatedColumns(project)
+  const rowsReference = rowsReferenceDefault
 
   await sheet.loadCells({
     startColumnIndex: 0,
@@ -145,15 +163,23 @@ export async function getProjetAndStudentsInfo(spreadsheetId, sheetTitle) {
     endRowIndex: rowsReference.endRowSheet,
   })
 
-  const requisitesProject = getRequisitesProject(sheet)
+  const requisitesProject = getRequisitesProject(
+    sheet,
+    columnsReference,
+    rowsReference
+  )
 
   const projectInfo = {
-    title: sheetTitle,
+    title: project.name,
     requisites: requisitesProject,
   }
 
-  const studentsInfo = getStudentsResults(sheet)
-  const tutors = getTutors(sheet)
+  const studentsInfo = getStudentsResults(
+    sheet,
+    columnsReference,
+    rowsReference
+  )
+  const tutors = getTutors(sheet, columnsReference, rowsReference)
 
   return [projectInfo, studentsInfo, tutors]
 }
