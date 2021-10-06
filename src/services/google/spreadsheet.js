@@ -9,7 +9,7 @@ import {
 import {
   columnsReferenceDefault,
   rowsReferenceDefault,
-} from '../../area51/default.js'
+} from '../../data/infoSpreadsheetDefault.js'
 
 async function initSpreadsheet(spreadsheetId, sheetTitle) {
   const doc = new GoogleSpreadsheet(spreadsheetId)
@@ -141,7 +141,7 @@ export async function getRepoLinks(urlSpreadsheetModule, project) {
   ) {
     const tutorRow = sheet
       .getCell(row, columnsReference.tutorColumn)
-      .value.toLowerCase()
+      .value?.toLowerCase()
     if (tutorRow === tutor) {
       links.push(sheet.getCell(row, columnsReference.linksColumn).value)
     }

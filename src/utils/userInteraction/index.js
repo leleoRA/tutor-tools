@@ -76,7 +76,7 @@ export async function askOperation(projectInfo) {
     case 2:
       try {
         await gitHubAuth.authenticate()
-        await codeReviewController.prepareReview(spreadsheetId, sheetTitle)
+        await codeReviewController.prepareReview(projectInfo)
       } catch (err) {
         console.log(err)
       }

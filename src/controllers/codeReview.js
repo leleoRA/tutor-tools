@@ -4,11 +4,12 @@ import * as googleService from '../services/google/spreadsheet.js'
 import * as gitHubService from '../services/github/repositories.js'
 import NotFoundError from '../errors/NotFound.js'
 
-export async function prepareReview(spreadsheetId, sheetTitle) {
+export async function prepareReview(projectInfo) {
   const projectRepositories = await googleService.getRepoLinks(
-    spreadsheetId,
-    sheetTitle
+    projectInfo.module.link,
+    projectInfo.module.project
   )
+
   if (projectRepositories.length === 0) {
     throw new NotFoundError('repositórios')
   }
