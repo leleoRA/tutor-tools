@@ -54,46 +54,6 @@ const classData = [
       },
     ],
   },
-  {
-    className: 4,
-    modules: [
-      {
-        id: 1,
-        name: 'Modelagem e Arquitetura',
-        link: 'www.google.com',
-        projects: [
-          {
-            name: 'globo.com',
-            isFullStack: true,
-            initialColumnRequisit: 'E',
-            endColumnRequisit: 'J',
-            week: 17,
-          },
-          {
-            name: 'globo.com',
-            isFullStack: true,
-            initialColumnRequisit: 'E',
-            endColumnRequisit: 'J',
-            week: 17,
-          },
-        ],
-      },
-      {
-        id: 2,
-        name: 'moduloeeee',
-        link: 'www.google.com',
-        projects: [
-          {
-            name: 'globo.com',
-            isFullStack: true,
-            initialColumnRequisit: 'E',
-            endColumnRequisit: 'J',
-            week: 17,
-          },
-        ],
-      },
-    ],
-  },
 ]
 
 export default classData
