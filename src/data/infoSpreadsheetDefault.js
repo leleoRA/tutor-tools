@@ -5,6 +5,7 @@ export const columnsReferenceDefault = {
   nameColumn: convertLetterInNumber('A'),
   tutorColumn: convertLetterInNumber('B'),
   linksColumn: convertLetterInNumber('C'),
+  linksColumn2: convertLetterInNumber('D'),
 }
 
 export const rowsReferenceDefault = {
