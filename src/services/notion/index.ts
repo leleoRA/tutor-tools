@@ -5,7 +5,7 @@ import {
   createTemplateRequestProject,
   createTemplateRequisitesEvaluationProject,
   getColorForEvaluationString,
-} from '../../utils/notion/index.js'
+} from '../../utils/notion/index'
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN })
 const databaseId = process.env.NOTION_DATABASE_ID

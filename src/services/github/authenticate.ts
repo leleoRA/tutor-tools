@@ -2,7 +2,7 @@ import axios from 'axios'
 
 import { validateGitHubToken } from 'validate-github-token'
 
-import * as hooks from '../../utils/hooks/index.js'
+import * as hooks from '../../utils/hooks/index'
 
 export async function validadeUserTokenDomain(gitHubName) {
   const config = hooks.getConfig(process.env.GIT_TOKEN)

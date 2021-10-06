@@ -1,6 +1,6 @@
-import { getProjetAndStudentsInfo } from '../services/google/spreadsheet.js'
-import { createTemplate } from '../services/notion/index.js'
-import { formatedTutors } from '../utils/google/index.js'
+import { getProjetAndStudentsInfo } from '../services/google/spreadsheet'
+import { createTemplate } from '../services/notion/index'
+import { formatedTutors } from '../utils/google/index'
 
 export async function prepareCommunication(moduleInfo) {
   const urlSpreadsheet = moduleInfo.module.link

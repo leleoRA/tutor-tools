@@ -1,12 +1,12 @@
 import axios from 'axios'
 import shell from 'shelljs'
 
-import * as hooks from '../../utils/hooks/index.js'
+import * as hooks from '../../utils/hooks/index'
 
-import CanNotClone from '../../errors/CanNotClone.js'
-import CanNotCommitAndPush from '../../errors/CanNotCommitAndPush.js'
-import CanNotFork from '../../errors/CanNotFork.js'
-import CanNotPullRequest from '../../errors/CanNotPullRequest.js'
+import CanNotClone from '../../errors/CanNotClone'
+import CanNotCommitAndPush from '../../errors/CanNotCommitAndPush'
+import CanNotFork from '../../errors/CanNotFork'
+import CanNotPullRequest from '../../errors/CanNotPullRequest'
 
 export function getRepoInfs(repoURL) {
   const urlInfs = repoURL.split('/')

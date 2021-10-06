@@ -1,4 +1,4 @@
-import { convertLetterInNumber } from '../utils/tools/index.js'
+import { convertLetterInNumber } from '../utils/tools/index'
 
 export const columnsReferenceDefault = {
   endColumn: convertLetterInNumber('R'),

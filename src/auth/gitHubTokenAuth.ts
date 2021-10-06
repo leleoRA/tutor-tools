@@ -1,7 +1,7 @@
-import * as service from '../services/github/authenticate.js'
+import * as service from '../services/github/authenticate'
 
-import NotFoundError from '../errors/NotFound.js'
-import UnauthorizedError from '../errors/Unauthorized.js'
+import NotFoundError from '../errors/NotFound'
+import UnauthorizedError from '../errors/Unauthorized'
 
 export async function authenticate() {
   const gitHubToken = process.env.GIT_TOKEN
@@ -9,7 +9,7 @@ export async function authenticate() {
 
   try {
     await service.validadeGitHubTokenAndPermissions(gitHubToken)
-    await service.validadeUserTokenDomain(gitHubName, gitHubToken)
+    await service.validadeUserTokenDomain(gitHubName)
   } catch (err) {
     if (err.response?.status === 404) {
       throw new NotFoundError('usuário no github')

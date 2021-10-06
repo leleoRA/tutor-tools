@@ -1,7 +1,7 @@
-import './setup.js'
+import './setup'
 import shell from 'shelljs'
 
-import * as userInteraction from './utils/userInteraction/index.js'
+import * as userInteraction from './utils/userInteraction/index'
 
 global.root = shell.pwd().stdout
 
