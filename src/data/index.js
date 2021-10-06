@@ -5,15 +5,15 @@ const classData = [
       {
         id: 1,
         name: 'Front-end com interfaces estáticas',
-        link: 'www.google.com',
+        link: 'https://docs.google.com/spreadsheets/d/1WggtFYE6R7OY0kFMIAv-IjY-PN4OZ3EJSqmsveWqTjM/edit#gid=0',
         projects: [
           {
-            name: 'Globo.com',
-            isFullStack: true,
+            name: 'teste',
+            isFullStack: false,
             initialColumnRequisit: 'E',
             endColumnRequisit: 'J',
             week: 1,
-            expectationColumn: 'F',
+            expectationColumn: 'L',
           },
           {
             name: 'Instagram',
@@ -21,6 +21,7 @@ const classData = [
             initialColumnRequisit: 'E',
             endColumnRequisit: 'J',
             week: 2,
+            expectationColumn: 'F',
           },
         ],
       },
@@ -35,6 +36,7 @@ const classData = [
             initialColumnRequisit: 'E',
             endColumnRequisit: 'J',
             week: 3,
+            expectationColumn: 'F',
           },
           {
             name: 'Parrot Card Game',
@@ -42,6 +44,7 @@ const classData = [
             initialColumnRequisit: 'E',
             endColumnRequisit: 'J',
             week: 4,
+            expectationColumn: 'F',
           },
           {
             name: 'Bate-Papo Uol',
@@ -49,6 +52,7 @@ const classData = [
             initialColumnRequisit: 'E',
             endColumnRequisit: 'J',
             week: 5,
+            expectationColumn: 'F',
           },
         ],
       },

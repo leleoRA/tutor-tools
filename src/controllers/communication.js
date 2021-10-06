@@ -2,10 +2,13 @@ import { getProjetAndStudentsInfo } from '../services/google/spreadsheet.js'
 import { createTemplate } from '../services/notion/index.js'
 import { formatedTutors } from '../utils/google/index.js'
 
-export async function prepareCommunication(spreadsheetId, sheetTitle, nSemana) {
+export async function prepareCommunication(moduleInfo) {
+  const urlSpreadsheet = moduleInfo.module.link
+  const projectSelected = moduleInfo.module.project
+  const nSemana = moduleInfo.module.project.week
   const [projectInfo, studentsInfo, tutors] = await getProjetAndStudentsInfo(
-    spreadsheetId,
-    sheetTitle
+    urlSpreadsheet,
+    projectSelected
   )
   const tutorInfo = formatedTutors(tutors, studentsInfo)
   await createTemplate(tutorInfo, projectInfo, nSemana)

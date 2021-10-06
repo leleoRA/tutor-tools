@@ -9,7 +9,7 @@ import {
 import {
   columnsReferenceDefault,
   rowsReferenceDefault,
-} from '../../area51/default.js'
+} from '../../data/infoSpreadsheetDefault.js'
 
 async function initSpreadsheet(spreadsheetId, sheetTitle) {
   const doc = new GoogleSpreadsheet(spreadsheetId)
@@ -107,10 +107,8 @@ function getTutors(sheet, columnsReference, rowsReference) {
     row < rowsReference.endRowSheet;
     row += 1
   ) {
-    const tutor = sheet
-      .getCell(row, columnsReference.tutorColumn)
-      .value.toLowerCase()
-    if (!tutors.includes(tutor)) {
+    const tutor = sheet.getCell(row, columnsReference.tutorColumn).value
+    if (tutor !== null && !tutors.includes(tutor.toLowerCase())) {
       tutors.push(tutor)
     }
   }
@@ -173,6 +171,8 @@ export async function getProjetAndStudentsInfo(urlSpreadsheetModule, project) {
     title: project.name,
     requisites: requisitesProject,
   }
+
+  console.log(projectInfo)
 
   const studentsInfo = getStudentsResults(
     sheet,

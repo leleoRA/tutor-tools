@@ -67,7 +67,6 @@ export async function askOperation(projectInfo) {
   )
   const spreadsheetId = '1WggtFYE6R7OY0kFMIAv-IjY-PN4OZ3EJSqmsveWqTjM'
   const sheetTitle = 'teste'
-  const nSemana = '17'
   switch (index + 1) {
     case 1:
       await deliveryReviewController.prepareReview(spreadsheetId, sheetTitle)
@@ -83,11 +82,7 @@ export async function askOperation(projectInfo) {
       break
 
     case 3:
-      await communicationController.prepareCommunication(
-        spreadsheetId,
-        sheetTitle,
-        nSemana
-      )
+      await communicationController.prepareCommunication(projectInfo)
       break
 
     case 4:
