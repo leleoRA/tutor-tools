@@ -29,8 +29,6 @@ async function initialTemplateStudent(blockId, student, projectName) {
               {
                 type: 'toggle',
                 toggle: {
-                  text: addText('Feedback de Entrega'),
-
                   text: addText('Feedback de Entrega', { bold: true }),
 
                   children: [
