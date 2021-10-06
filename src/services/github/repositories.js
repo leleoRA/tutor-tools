@@ -139,6 +139,9 @@ export async function createPullRequest(username, repoName) {
       body,
       config
     )
+    .then(() => {
+      console.log('Pull request criado com sucesso!')
+    })
     .catch(({ response }) => {
       throw new CanNotPullRequest(repoName, username, response.status)
     })

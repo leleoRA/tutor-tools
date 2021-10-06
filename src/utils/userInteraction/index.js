@@ -65,29 +65,23 @@ export async function askOperation(projectInfo) {
     operations,
     chalk.bold('Qual operação deseja realizar?')
   )
-  const spreadsheetId = '1WggtFYE6R7OY0kFMIAv-IjY-PN4OZ3EJSqmsveWqTjM'
-  const sheetTitle = 'teste'
-  const nSemana = '17'
+
   switch (index + 1) {
     case 1:
-      await deliveryReviewController.prepareReview(spreadsheetId, sheetTitle)
+      await deliveryReviewController.prepareReview(projectInfo)
       break
 
     case 2:
       try {
         await gitHubAuth.authenticate()
-        await codeReviewController.prepareReview(spreadsheetId, sheetTitle)
+        await codeReviewController.prepareReview(projectInfo)
       } catch (err) {
         console.log(err)
       }
       break
 
     case 3:
-      await communicationController.prepareCommunication(
-        spreadsheetId,
-        sheetTitle,
-        nSemana
-      )
+      await communicationController.prepareCommunication(projectInfo)
       break
 
     case 4:

@@ -1,6 +1,5 @@
 .env
 yarn.lock
-
 node_modules
-
 client_secret_google.js
+src/area51/*.js
