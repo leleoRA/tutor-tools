@@ -109,7 +109,7 @@ function getTutors(sheet, columnsReference, rowsReference) {
   ) {
     const tutor = sheet.getCell(row, columnsReference.tutorColumn).value
     if (tutor !== null && !tutors.includes(tutor.toLowerCase())) {
-      tutors.push(tutor)
+      tutors.push(tutor.toLowerCase())
     }
   }
   return tutors

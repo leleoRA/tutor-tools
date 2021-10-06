@@ -11,7 +11,7 @@ export function addText(content, annotations = {}) {
 }
 
 export function getMessageFeedbackCode() {
-  return `Feedback Qualitativo: disponível no Pull Request no GitHub (Pode fechar o Pull Request depois de ler, clicando em Close Pull Request.) "`
+  return `Feedback Qualitativo: disponível no Pull Request no GitHub (Pode fechar o Pull Request depois de ler, clicando em Close Pull Request.) `
 }
 
 export function createTemplateRequisitesEvaluationProject(student) {
