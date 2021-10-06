@@ -172,8 +172,6 @@ export async function getProjetAndStudentsInfo(urlSpreadsheetModule, project) {
     requisites: requisitesProject,
   }
 
-  console.log(projectInfo)
-
   const studentsInfo = getStudentsResults(
     sheet,
     columnsReference,
