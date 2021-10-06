@@ -9,15 +9,15 @@ const classData = [
         projects: [
           {
             name: 'teste',
-            isFullStack: true,
+            isFullStack: false,
             initialColumnRequisit: 'E',
             endColumnRequisit: 'J',
             week: 1,
-            expectationColumn: 'F',
+            expectationColumn: 'L',
           },
           {
             name: 'Instagram',
-            isFullStack: true,
+            isFullStack: false,
             initialColumnRequisit: 'E',
             endColumnRequisit: 'J',
             week: 2,
@@ -32,7 +32,7 @@ const classData = [
         projects: [
           {
             name: 'Foodcamp',
-            isFullStack: true,
+            isFullStack: false,
             initialColumnRequisit: 'E',
             endColumnRequisit: 'J',
             week: 3,
@@ -40,7 +40,7 @@ const classData = [
           },
           {
             name: 'Parrot Card Game',
-            isFullStack: true,
+            isFullStack: false,
             initialColumnRequisit: 'E',
             endColumnRequisit: 'J',
             week: 4,
@@ -48,7 +48,7 @@ const classData = [
           },
           {
             name: 'Bate-Papo Uol',
-            isFullStack: true,
+            isFullStack: false,
             initialColumnRequisit: 'E',
             endColumnRequisit: 'J',
             week: 5,
