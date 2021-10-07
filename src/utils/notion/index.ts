@@ -11,6 +11,7 @@ const optionsDefault = {
   id: uuid(),
   created_time: new Date().toISOString(),
   last_edited_time: new Date().toISOString(),
+  archived: false,
 }
 
 export function addText(content: string, annotationsParam = null): RichText[] {

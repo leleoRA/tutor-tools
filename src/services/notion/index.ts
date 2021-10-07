@@ -16,6 +16,7 @@ const optionsDefault = {
   id: uuid(),
   created_time: new Date().toISOString(),
   last_edited_time: new Date().toISOString(),
+  archived: false,
 }
 async function initialTemplateStudent(
   blockId: string,
