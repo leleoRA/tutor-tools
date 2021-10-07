@@ -8,6 +8,8 @@ import * as gitHubAuth from '../../auth/gitHubTokenAuth.js'
 import * as codeReviewController from '../../controllers/codeReview.js'
 import * as communicationController from '../../controllers/communication.js'
 import * as deliveryReviewController from '../../controllers/deliveryReview.js'
+import * as repoRemoverController from '../../controllers/repoRemover.js'
+
 import * as hooks from '../hooks/index.js'
 
 export function askClass() {
@@ -59,6 +61,7 @@ export async function askOperation(projectInfo) {
     'Revisão de Código',
     'Gerar Comunicação',
     'Finalizar Avaliação',
+    'Remover repositórios forkados no GitHub',
   ]
 
   const index = readlineSync.keyInSelect(
@@ -86,6 +89,9 @@ export async function askOperation(projectInfo) {
 
     case 4:
       hooks.clear()
+      break
+    case 5:
+      await repoRemoverController.removeForkedRepositories(projectInfo)
       break
     default:
       break
