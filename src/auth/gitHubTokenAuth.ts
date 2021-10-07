@@ -3,7 +3,7 @@ import * as service from '../services/github/authenticate'
 import NotFoundError from '../errors/NotFound'
 import UnauthorizedError from '../errors/Unauthorized'
 
-export async function authenticate() {
+export async function authenticate(): Promise<void> {
   const gitHubToken = process.env.GIT_TOKEN
   const gitHubName = process.env.GIT_NAME
 

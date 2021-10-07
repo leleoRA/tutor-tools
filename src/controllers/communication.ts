@@ -1,8 +1,11 @@
+import { ImoduleInfo } from '../interfaces'
 import { getProjetAndStudentsInfo } from '../services/google/spreadsheet'
 import { createTemplate } from '../services/notion/index'
 import { formatedTutors } from '../utils/google/index'
 
-export async function prepareCommunication(moduleInfo) {
+export async function prepareCommunication(
+  moduleInfo: ImoduleInfo
+): Promise<void> {
   const urlSpreadsheet = moduleInfo.module.link
   const projectSelected = moduleInfo.module.project
   const { week } = moduleInfo.module.project
@@ -11,5 +14,5 @@ export async function prepareCommunication(moduleInfo) {
     projectSelected
   )
   const tutorInfo = formatedTutors(tutors, studentsInfo)
-  await createTemplate(tutorInfo, projectInfo, week)
+  await createTemplate(tutorInfo, projectInfo, String(week))
 }

@@ -6,6 +6,15 @@ export interface Iproject {
   week: number
   expectationColumn: string
 }
+export interface ImoduleInfo {
+  classeName: number
+  module: {
+    id: number
+    link: string
+    project: Iproject
+  }
+}
+
 export interface IrequisitesProject {
   description: string
   note: string

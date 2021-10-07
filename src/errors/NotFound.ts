@@ -1,5 +1,5 @@
 export default class NotFoundError extends Error {
-  constructor(name) {
+  constructor(name: string) {
     super(`Sem resultados para a busca de ${name}!`)
   }
 }
