@@ -3,6 +3,7 @@ import shell from 'shelljs'
 import * as googleService from '../services/google/spreadsheet.js'
 import * as gitHubService from '../services/github/repositories.js'
 import NotFoundError from '../errors/NotFound.js'
+import { clear } from '../utils/hooks/index.js'
 
 export async function prepareReview(projectInfo) {
   const projectRepositories = await googleService.getRepoLinks(
@@ -35,4 +36,6 @@ export async function prepareReview(projectInfo) {
       }
     })
   )
+
+  clear('code-review')
 }
