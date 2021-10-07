@@ -1,24 +1,34 @@
-import { Annotations, RichText } from '@notionhq/client/build/src/api-types.js'
+import {
+  Annotations,
+  RichText,
+  BulletedListItemBlock,
+  ToggleBlock,
+} from '@notionhq/client/build/src/api-types.js'
 import { IprojectInfo, Istudent } from '../../interfaces'
 
-interface BulletedListItemBlock {
-  type: string
-  // eslint-disable-next-line camelcase
-  bulleted_list_item: {
-    text: RichText[]
-  }
+const optionsDefault = {
+  id: '',
+  created_time: '',
+  last_edited_time: '',
 }
+// interface BulletedListItemBlock {
+//   type: string
+//   // eslint-disable-next-line camelcase
+//   bulleted_list_item: {
+//     text: RichText[]
+//   }
+// }
 
-interface ITemplateRequisiteToogleBlock {
-  type: string
-  toggle: {
-    text: RichText[]
-    children?: BulletedListItemBlock[]
-  }
-}
-export function addText(
-  content: string,
-  annotations: Annotations = {
+// interface ITemplateRequisiteToogleBlock {
+//   type: string
+//   toggle: {
+//     text: RichText[]
+//     children?: BulletedListItemBlock[]
+//   }
+// }
+
+export function addText(content: string, annotationsParam = null): RichText[] {
+  const annotations: Annotations = {
     bold: false,
     italic: false,
     underline: false,
@@ -26,7 +36,11 @@ export function addText(
     strikethrough: false,
     color: 'default',
   }
-): RichText[] {
+  if (annotationsParam) {
+    Object.keys(annotationsParam).forEach((key) => {
+      annotations[key] = annotationsParam[key]
+    })
+  }
   return [
     {
       type: 'text',
@@ -46,33 +60,50 @@ export function getMessageFeedbackCode(): string {
 export function createTemplateRequisitesEvaluationProject(
   student: Istudent
 ): BulletedListItemBlock[] {
-  const requestProjectFormated = student.requisitesReview.map((requisite) => ({
-    type: 'bulleted_list_item',
-    bulleted_list_item: {
-      text: addText(`${requisite.description}: ${requisite.evaluation}`),
-    },
-  }))
+  const requestProjectFormated = student.requisitesReview.map((requisite) => {
+    const bullet: BulletedListItemBlock = {
+      ...optionsDefault,
+      object: 'block',
+      has_children: true,
+      type: 'bulleted_list_item',
+      bulleted_list_item: {
+        text: addText(`${requisite.description}: ${requisite.evaluation}`),
+      },
+    }
+
+    return bullet
+  })
   return requestProjectFormated
 }
 
 export function createTemplateRequestProject(
   projectInfo: IprojectInfo
-): Array<BulletedListItemBlock | ITemplateRequisiteToogleBlock> {
+): Array<BulletedListItemBlock | ToggleBlock> {
   const requestProjectFormated = projectInfo.requisites.map((request) => {
     if (request.note === undefined) {
-      return {
+      const bullet: BulletedListItemBlock = {
+        ...optionsDefault,
+        object: 'block',
+        has_children: true,
         type: 'bulleted_list_item',
         bulleted_list_item: {
           text: addText(request.description),
         },
       }
+      return bullet
     }
-    return {
+    const toggle: ToggleBlock = {
+      ...optionsDefault,
+      object: 'block',
+      has_children: true,
       type: 'toggle',
       toggle: {
         text: addText(request.description),
         children: [
           {
+            ...optionsDefault,
+            object: 'block',
+            has_children: true,
             type: 'bulleted_list_item',
             bulleted_list_item: {
               text: addText(request.note),
@@ -81,6 +112,7 @@ export function createTemplateRequestProject(
         ],
       },
     }
+    return toggle
   })
   return requestProjectFormated
 }

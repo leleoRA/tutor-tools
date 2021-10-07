@@ -1,4 +1,5 @@
 import { Client } from '@notionhq/client'
+import { IprojectInfo, Istudent, ItutorInfo } from '../../interfaces'
 import {
   addText,
   getMessageFeedbackCode,
@@ -10,29 +11,50 @@ import {
 const notion = new Client({ auth: process.env.NOTION_TOKEN })
 const databaseId = process.env.NOTION_DATABASE_ID
 
-async function initialTemplateStudent(blockId, student, projectName) {
+const optionsDefault = {
+  id: '',
+  created_time: '',
+  last_edited_time: '',
+}
+async function initialTemplateStudent(
+  blockId: string,
+  student: Istudent,
+  projectName: string
+) {
   try {
     const response = await notion.blocks.children.append({
       block_id: blockId,
       children: [
         {
+          ...optionsDefault,
+          object: 'block',
+          has_children: true,
           type: 'toggle',
           toggle: {
             text: addText(student.name),
             children: [
               {
+                ...optionsDefault,
+                object: 'block',
+                has_children: false,
                 type: 'heading_3',
                 heading_3: {
                   text: addText(projectName),
                 },
               },
               {
+                ...optionsDefault,
+                object: 'block',
+                has_children: true,
                 type: 'toggle',
                 toggle: {
                   text: addText('Feedback de Entrega', { bold: true }),
 
                   children: [
                     {
+                      ...optionsDefault,
+                      object: 'block',
+                      has_children: false,
                       type: 'bulleted_list_item',
                       bulleted_list_item: {
                         text: [
@@ -47,6 +69,9 @@ async function initialTemplateStudent(blockId, student, projectName) {
                       },
                     },
                     {
+                      ...optionsDefault,
+                      object: 'block',
+                      has_children: true,
                       type: 'toggle',
                       toggle: {
                         text: addText(
@@ -55,6 +80,9 @@ async function initialTemplateStudent(blockId, student, projectName) {
                       },
                     },
                     {
+                      ...optionsDefault,
+                      object: 'block',
+                      has_children: true,
                       type: 'toggle',
                       toggle: {
                         text: addText('Avaliação por requisito'),
@@ -64,11 +92,17 @@ async function initialTemplateStudent(blockId, student, projectName) {
                 },
               },
               {
+                ...optionsDefault,
+                object: 'block',
+                has_children: true,
                 type: 'toggle',
                 toggle: {
                   text: addText('Feedback de Código', { bold: true }),
                   children: [
                     {
+                      ...optionsDefault,
+                      object: 'block',
+                      has_children: false,
                       type: 'bulleted_list_item',
                       bulleted_list_item: {
                         text: addText(getMessageFeedbackCode()),
@@ -151,6 +185,9 @@ async function addToggle(blockId, content) {
       block_id: blockId,
       children: [
         {
+          ...optionsDefault,
+          object: 'block',
+          has_children: true,
           type: 'toggle',
           toggle: {
             text: addText(content),
@@ -164,7 +201,11 @@ async function addToggle(blockId, content) {
   }
 }
 
-export async function createTemplate(tutorInfo, projectInfo, nSemana = '1') {
+export async function createTemplate(
+  tutorInfo: ItutorInfo[],
+  projectInfo: IprojectInfo,
+  nSemana = '1'
+): Promise<void> {
   const projectName = `Semana #${nSemana}-${projectInfo.title}`
   const idProject = (await addToggle(databaseId, projectInfo.title)).results[0]
     .id

@@ -35,3 +35,7 @@ export interface Istudent {
   }
   requisitesReview: IrequisitesReview[]
 }
+export interface ItutorInfo {
+  name: string
+  students: Istudent[]
+}
