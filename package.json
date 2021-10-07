@@ -1,10 +1,10 @@
 {
   "name": "tutor-tools",
   "version": "1.0.0",
-  "type": "module",
-  "main": "./src/index.js",
+  "main": "./src/index.ts",
   "scripts": {
-    "start": "node ./src/index.js"
+    "start": "node ./src/index.js",
+    "ts": "ts-node ./src/index.ts"
   },
   "author": "Driven Education",
   "license": "ISC",
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@types/google-spreadsheet": "^3.1.5",
+    "@types/node": "^16.10.3",
     "@types/shelljs": "^0.8.9",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
