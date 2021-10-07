@@ -1,4 +1,5 @@
 import { Client } from '@notionhq/client'
+import { v4 as uuid } from 'uuid'
 import { IprojectInfo, Istudent, ItutorInfo } from '../../interfaces'
 import {
   addText,
@@ -12,9 +13,9 @@ const notion = new Client({ auth: process.env.NOTION_TOKEN })
 const databaseId = process.env.NOTION_DATABASE_ID
 
 const optionsDefault = {
-  id: '',
-  created_time: '',
-  last_edited_time: '',
+  id: uuid(),
+  created_time: new Date().toISOString(),
+  last_edited_time: new Date().toISOString(),
 }
 async function initialTemplateStudent(
   blockId: string,
@@ -102,7 +103,7 @@ async function initialTemplateStudent(
                     {
                       ...optionsDefault,
                       object: 'block',
-                      has_children: false,
+                      has_children: true,
                       type: 'bulleted_list_item',
                       bulleted_list_item: {
                         text: addText(getMessageFeedbackCode()),
@@ -122,7 +123,10 @@ async function initialTemplateStudent(
   }
 }
 
-async function addRequisitesProject(id, projectInfo) {
+async function addRequisitesProject(
+  id: string,
+  projectInfo: IprojectInfo
+): Promise<void> {
   try {
     await notion.blocks.children.append({
       block_id: id,
@@ -133,7 +137,10 @@ async function addRequisitesProject(id, projectInfo) {
   }
 }
 
-async function addRequisitesEvaluationProject(id, student) {
+async function addRequisitesEvaluationProject(
+  id: string,
+  student: Istudent
+): Promise<void> {
   try {
     await notion.blocks.children.append({
       block_id: id,
@@ -144,7 +151,7 @@ async function addRequisitesEvaluationProject(id, student) {
   }
 }
 
-async function findIdRequisiteProject(id) {
+async function findIdRequisiteProject(id: string) {
   let lastid = id
   let response = await notion.blocks.children.list({ block_id: id })
   const path = [1, 1]
@@ -161,7 +168,7 @@ async function findIdRequisiteProject(id) {
   return lastid
 }
 
-async function findIdEvaluationRequisitesProject(id) {
+async function findIdEvaluationRequisitesProject(id: string) {
   let lastid = id
   let response = await notion.blocks.children.list({ block_id: id })
   const path = [1, 2]
@@ -179,7 +186,7 @@ async function findIdEvaluationRequisitesProject(id) {
   return lastid
 }
 
-async function addToggle(blockId, content) {
+async function addToggle(blockId: string, content: string) {
   try {
     const response = await notion.blocks.children.append({
       block_id: blockId,

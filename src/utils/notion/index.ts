@@ -4,28 +4,14 @@ import {
   BulletedListItemBlock,
   ToggleBlock,
 } from '@notionhq/client/build/src/api-types.js'
+import { v4 as uuid } from 'uuid'
 import { IprojectInfo, Istudent } from '../../interfaces'
 
 const optionsDefault = {
-  id: '',
-  created_time: '',
-  last_edited_time: '',
+  id: uuid(),
+  created_time: new Date().toISOString(),
+  last_edited_time: new Date().toISOString(),
 }
-// interface BulletedListItemBlock {
-//   type: string
-//   // eslint-disable-next-line camelcase
-//   bulleted_list_item: {
-//     text: RichText[]
-//   }
-// }
-
-// interface ITemplateRequisiteToogleBlock {
-//   type: string
-//   toggle: {
-//     text: RichText[]
-//     children?: BulletedListItemBlock[]
-//   }
-// }
 
 export function addText(content: string, annotationsParam = null): RichText[] {
   const annotations: Annotations = {

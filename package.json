@@ -19,14 +19,16 @@
     "os-name": "^5.0.0",
     "readline-sync": "^1.4.10",
     "shelljs": "^0.8.4",
+    "uuid": "^8.3.2",
     "validate-github-token": "^1.1.1"
   },
   "devDependencies": {
-    "@types/readline-sync": "^1.4.4",
     "@types/google-spreadsheet": "^3.1.5",
     "@types/node": "^16.10.3",
     "@types/os-name": "^3.1.0",
+    "@types/readline-sync": "^1.4.4",
     "@types/shelljs": "^0.8.9",
+    "@types/uuid": "^8.3.1",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "eslint": "^7.32.0",

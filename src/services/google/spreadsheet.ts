@@ -136,7 +136,7 @@ function getTutors(
     row += 1
   ) {
     const tutor = String(sheet.getCell(row, columnsReference.tutorColumn).value)
-    if (tutor !== null && !tutors.includes(tutor.toLowerCase())) {
+    if (tutor !== 'null' && !tutors.includes(tutor.toLowerCase())) {
       tutors.push(tutor.toLowerCase())
     }
   }
