@@ -9,7 +9,7 @@ export async function prepareCommunication(
   const urlSpreadsheet = moduleInfo.module.link
   const projectSelected = moduleInfo.module.project
   const { week } = moduleInfo.module.project
-  const [projectInfo, studentsInfo, tutors] = await getProjetAndStudentsInfo(
+  const { projectInfo, studentsInfo, tutors } = await getProjetAndStudentsInfo(
     urlSpreadsheet,
     projectSelected
   )

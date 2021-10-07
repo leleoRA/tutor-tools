@@ -23,7 +23,7 @@ export interface IprojectInfo {
   title: string
   requisites: IrequisitesProject[]
 }
-interface IrequisitesReview {
+export interface IrequisitesReview {
   description: string
   evaluation: string
 }
@@ -38,4 +38,25 @@ export interface Istudent {
 export interface ItutorInfo {
   name: string
   students: Istudent[]
+}
+export interface IcolumnsReference {
+  endColumn: number
+  nameColumn: number
+  tutorColumn: number
+  initialColumnRequisit: number
+  endColumnRequisit: number
+  expectationColumn: number
+  linksColumn: number
+  linksColumn2: number
+}
+export interface IrowsReference {
+  startRowSheet: number
+  endRowSheet: number
+  rowRequisit: number
+}
+
+export interface IprojetAndStudentsInfo {
+  projectInfo: IprojectInfo
+  studentsInfo: Istudent[]
+  tutors: string[]
 }
