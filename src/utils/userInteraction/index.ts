@@ -9,7 +9,7 @@ import * as codeReviewController from '../../controllers/codeReview'
 import * as communicationController from '../../controllers/communication'
 import * as deliveryReviewController from '../../controllers/deliveryReview'
 import * as hooks from '../hooks/index'
-
+import * as repoRemoverController from '../../controllers/repoRemover'
 export function askClass() {
   const classNames = classData.map(
     (classInfo) => `Turma ${classInfo.className}`
@@ -59,6 +59,7 @@ export async function askOperation(projectInfo) {
     'Revisão de Código',
     'Gerar Comunicação',
     'Finalizar Avaliação',
+    'Remover repositórios forkados no GitHub',
   ]
 
   const index = readlineSync.keyInSelect(
@@ -86,6 +87,9 @@ export async function askOperation(projectInfo) {
 
     case 4:
       hooks.clear()
+      break
+    case 5:
+      await repoRemoverController.removeForkedRepositories(projectInfo)
       break
     default:
       break

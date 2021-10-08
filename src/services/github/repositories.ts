@@ -158,3 +158,18 @@ export async function createPullRequest(
       throw new CanNotPullRequest(repoName, username, response.status)
     })
 }
+export async function remove(repoName: string) {
+  const config = hooks.getConfig(process.env.GIT_TOKEN)
+
+  axios
+    .delete(
+      `https://api.github.com/repos/${process.env.GIT_NAME}/${repoName}`,
+      config
+    )
+    .then(() => {
+      console.log(`Repositório ${repoName} deletado!`)
+    })
+    .catch(({ response }) => {
+      console.log(`Não foi possível deletar o repositório ${repoName}`)
+    })
+}
