@@ -4,6 +4,7 @@ import * as googleService from '../services/google/spreadsheet'
 import * as gitHubService from '../services/github/repositories'
 import NotFoundError from '../errors/NotFound'
 import { ImoduleInfo } from '../interfaces'
+import { clear } from '../utils/hooks/index'
 
 export async function prepareReview(projectInfo: ImoduleInfo): Promise<void> {
   const projectRepositories = await googleService.getRepoLinks(
@@ -36,4 +37,5 @@ export async function prepareReview(projectInfo: ImoduleInfo): Promise<void> {
       }
     })
   )
+  clear('code-review')
 }

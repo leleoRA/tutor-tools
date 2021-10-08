@@ -9,18 +9,13 @@ export function getConfig(token) {
   }
 }
 
-export function clear() {
+export function clear(directoryToClear = null) {
   console.log('Removendo diretórios temporários...')
-
-  // const system = osName()
-  // const separator = system.includes('Windows') ? '\\' : '/'
-
-  const pathDirectoryList = shell.pwd().split('/')
-  const actualDirectory = pathDirectoryList.pop()
-  if (actualDirectory === 'temp') {
-    shell.rm('-rf', '*')
-  } else if (actualDirectory === 'tutor-tools') {
-    shell.cd('temp')
-    shell.rm('-rf', '*')
+  shell.cd(global.root)
+  shell.cd('temp')
+  if (directoryToClear) {
+    shell.cd(directoryToClear)
   }
+
+  shell.rm('-rf', '*')
 }
