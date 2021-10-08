@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowJs": true,
+    "typeRoots": [
+      "./src/@types/*",
+      "./node_modules/@types"
+    ],
+  },
+  "exclude": [
+    "node_modules",
+    "tests"
+  ]
+}

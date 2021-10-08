@@ -1,14 +1,19 @@
 import axios from 'axios'
 import shell from 'shelljs'
 
-import * as hooks from '../../utils/hooks/index.js'
+import * as hooks from '../../utils/hooks/index'
 
-import CanNotClone from '../../errors/CanNotClone.js'
-import CanNotCommitAndPush from '../../errors/CanNotCommitAndPush.js'
-import CanNotFork from '../../errors/CanNotFork.js'
-import CanNotPullRequest from '../../errors/CanNotPullRequest.js'
+import CanNotClone from '../../errors/CanNotClone'
+import CanNotCommitAndPush from '../../errors/CanNotCommitAndPush'
+import CanNotFork from '../../errors/CanNotFork'
+import CanNotPullRequest from '../../errors/CanNotPullRequest'
 
-export function getRepoInfs(repoURL) {
+interface IrepoInfs {
+  username: string
+  repoName: string
+}
+
+export function getRepoInfs(repoURL: string): IrepoInfs {
   const urlInfs = repoURL.split('/')
 
   return {
@@ -17,7 +22,7 @@ export function getRepoInfs(repoURL) {
   }
 }
 
-export function fork(username, repoName) {
+export function fork(username: string, repoName: string): Promise<string> {
   console.log(
     `Iniciando fork do repositório "${repoName}" do usuário "${username}"...`
   )
@@ -39,7 +44,11 @@ export function fork(username, repoName) {
   return forkName
 }
 
-export function clone(username, repoName, isDeliveryReview) {
+export function clone(
+  username: string,
+  repoName: string,
+  isDeliveryReview: boolean
+): void {
   console.log(
     `Criando diretório temporário para o repositório "${repoName}"...`
   )
@@ -67,7 +76,7 @@ export function clone(username, repoName, isDeliveryReview) {
   }
 }
 
-export function deleteFiles(repoName) {
+export function deleteFiles(repoName: string): void {
   console.log(`Iniciando remoção dos arquivos da aplicação...`)
 
   const deleteIgnore = ['node_modules', 'package-lock.json', 'README.md']
@@ -77,7 +86,7 @@ export function deleteFiles(repoName) {
   })
 }
 
-export function commitAndPush(username, repoName) {
+export function commitAndPush(username: string, repoName: string): void {
   console.log('Criando commit de revisão de código...')
 
   shell.cd(repoName)
@@ -97,7 +106,7 @@ export function commitAndPush(username, repoName) {
   }
 }
 
-async function getRepoMainBranch(username, repoName) {
+async function getRepoMainBranch(username: string, repoName: string) {
   console.log(`Buscando pela branch principal em "${repoName}"...`)
 
   async function request() {
@@ -120,7 +129,10 @@ async function getRepoMainBranch(username, repoName) {
   })
 }
 
-export async function createPullRequest(username, repoName) {
+export async function createPullRequest(
+  username: string,
+  repoName: string
+): Promise<void> {
   console.log(`Criando pull request em "${repoName}"...`)
 
   const mainBranch = await getRepoMainBranch(username, repoName)
@@ -146,8 +158,7 @@ export async function createPullRequest(username, repoName) {
       throw new CanNotPullRequest(repoName, username, response.status)
     })
 }
-
-export async function remove(repoName) {
+export async function remove(repoName: string) {
   const config = hooks.getConfig(process.env.GIT_TOKEN)
 
   axios

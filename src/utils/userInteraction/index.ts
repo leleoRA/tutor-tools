@@ -1,17 +1,15 @@
 import readlineSync from 'readline-sync'
 import chalk from 'chalk'
 
-import userInputValidation from '../userInputValidation/index.js'
-import classData from '../../data/index.js'
+import userInputValidation from '../userInputValidation/index'
+import classData from '../../data/index'
 
-import * as gitHubAuth from '../../auth/gitHubTokenAuth.js'
-import * as codeReviewController from '../../controllers/codeReview.js'
-import * as communicationController from '../../controllers/communication.js'
-import * as deliveryReviewController from '../../controllers/deliveryReview.js'
-import * as repoRemoverController from '../../controllers/repoRemover.js'
-
-import * as hooks from '../hooks/index.js'
-
+import * as gitHubAuth from '../../auth/gitHubTokenAuth'
+import * as codeReviewController from '../../controllers/codeReview'
+import * as communicationController from '../../controllers/communication'
+import * as deliveryReviewController from '../../controllers/deliveryReview'
+import * as hooks from '../hooks/index'
+import * as repoRemoverController from '../../controllers/repoRemover'
 export function askClass() {
   const classNames = classData.map(
     (classInfo) => `Turma ${classInfo.className}`

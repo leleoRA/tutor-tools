@@ -1,9 +1,12 @@
-import * as gitHubRepositoriesService from '../services/github/repositories.js'
-import * as googleService from '../services/google/spreadsheet.js'
+import * as gitHubRepositoriesService from '../services/github/repositories'
+import * as googleService from '../services/google/spreadsheet'
 
-import NotFoundError from '../errors/NotFound.js'
+import NotFoundError from '../errors/NotFound'
+import { ImoduleInfo } from '../interfaces'
 
-export async function removeForkedRepositories(projectInfo) {
+export async function removeForkedRepositories(
+  projectInfo: ImoduleInfo
+): Promise<void> {
   const projectRepositories = await googleService.getRepoLinks(
     projectInfo.module.link,
     projectInfo.module.project

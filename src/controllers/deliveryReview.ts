@@ -1,10 +1,11 @@
 import shell from 'shelljs'
 
-import * as googleService from '../services/google/spreadsheet.js'
-import * as gitHubService from '../services/github/repositories.js'
-import NotFoundError from '../errors/NotFound.js'
+import * as googleService from '../services/google/spreadsheet'
+import * as gitHubService from '../services/github/repositories'
+import NotFoundError from '../errors/NotFound'
+import { ImoduleInfo } from '../interfaces'
 
-export async function prepareReview(projectInfo) {
+export async function prepareReview(projectInfo: ImoduleInfo): Promise<void> {
   const projectRepositories = await googleService.getRepoLinks(
     projectInfo.module.link,
     projectInfo.module.project

@@ -1,8 +1,13 @@
-import './setup.js'
+/* eslint-disable no-var */
+/* eslint-disable vars-on-top */
+import './setup'
 import shell from 'shelljs'
 
-import * as userInteraction from './utils/userInteraction/index.js'
+import * as userInteraction from './utils/userInteraction/index'
 
+declare global {
+  var root: string
+}
 global.root = shell.pwd().stdout
 
 async function main() {

@@ -2,9 +2,11 @@ import axios from 'axios'
 
 import { validateGitHubToken } from 'validate-github-token'
 
-import * as hooks from '../../utils/hooks/index.js'
+import * as hooks from '../../utils/hooks/index'
 
-export async function validadeUserTokenDomain(gitHubName) {
+export async function validadeUserTokenDomain(
+  gitHubName: string
+): Promise<void> {
   const config = hooks.getConfig(process.env.GIT_TOKEN)
 
   const response = await axios.get(
@@ -17,7 +19,9 @@ export async function validadeUserTokenDomain(gitHubName) {
   }
 }
 
-export async function validadeGitHubTokenAndPermissions(gitHubToken) {
+export async function validadeGitHubTokenAndPermissions(
+  gitHubToken: string
+): Promise<void> {
   await validateGitHubToken(gitHubToken, {
     scope: {
       included: ['repo'],
