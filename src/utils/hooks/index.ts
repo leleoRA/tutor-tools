@@ -1,7 +1,15 @@
 import shell from 'shelljs'
 // import osName from 'os-name'
 
-export function getConfig(token) {
+interface authorization {
+  Authorization: string
+}
+
+interface header {
+  headers: authorization
+}
+
+export function getConfig(token: string): header {
   return {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -9,7 +17,7 @@ export function getConfig(token) {
   }
 }
 
-export function clear(directoryToClear = null) {
+export function clear(directoryToClear: any = null) {
   console.log('Removendo diretórios temporários...')
   shell.cd(global.root)
   shell.cd('temp')
