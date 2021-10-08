@@ -32,7 +32,7 @@ npm install
 Após isso, você deve gerar algumas chaves de autenticação para a conexão com as api's utilizadas na aplicação. São elas:
 - **GitHub**: *vá até o seu github e gere um token com acesso para forks, pull requests e clones*
 - **Notion**: *consulte a documentação neste [link](https://developers.notion.com/docs/getting-started) para gerar o token pessoal e o id do banco de dados da página que você deseja editar na comunicação.*
-- **Google**: *consulte a documentação neste [link](https://developers.google.com/sheets/api) para gerar os dados em formato JSON que deve entrar no arquivo ``client_secret_google.ts`` na raiz do projeto e também gerar a permissão do email do cliente na planinha de avaliações.*
+- **Google**: *consulte a documentação neste [link](https://developers.google.com/sheets/api) para gerar os dados em formato JSON que deve entrar no arquivo ``client_secret_google.ts`` na raiz do projeto e também gerar a permissão do email do cliente na planilha de avaliações.*
 
 Tendo esses dados, crie um arquivo .env baseado no .envExample. Além disso, o arquivo .env também deve conter o seu nome na variável de ambiente TUTOR_NAME.
 
