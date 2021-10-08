@@ -1,5 +1,4 @@
 import shell from 'shelljs'
-// import osName from 'os-name'
 
 export function getConfig(token) {
   return {
