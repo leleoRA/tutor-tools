@@ -24,7 +24,7 @@ Para começar a usar o tutor tools, é necessário que baixe o projeto. Você po
 ```
 git clone https://github.com/gugabs/tutor-tools.git
 ```
-Em seguida, entre no projeto baixado e instale as dependencias rodando
+Em seguida, entre no projeto baixado e instale as dependências rodando
 ```
 npm install
 ```
